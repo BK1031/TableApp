@@ -17,7 +17,7 @@ class _TabBarControllerState extends State<TabBarController> with WidgetsBinding
   int currTab = 0;
   Widget _homeBody = new HomePage();
   Widget _groupPage = new GroupsPage();
-  Widget _profilePage = new ProfilePage();
+  Widget _profilePage = new ProfilePage(currUser.id);
   Widget body;
 
 
