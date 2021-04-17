@@ -2,6 +2,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:table/pages/auth/auth_page.dart';
+import 'package:table/pages/auth/login_page.dart';
+import 'package:table/pages/auth/register_page.dart';
 import 'package:table/pages/tab_bar_controller.dart';
 import 'package:table/utils/config.dart';
 import 'package:table/utils/theme.dart';
@@ -19,13 +21,10 @@ Future<void> main() async {
     return new AuthPage();
   }));
   router.define('/auth/login', handler: new Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) {
-    return new Container();
+    return new LoginPage();
   }));
   router.define('/auth/register', handler: new Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) {
-    return new Container();
-  }));
-  router.define('/auth/error', handler: new Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) {
-    return new Container();
+    return new RegisterPage();
   }));
 
   // HOME ROUTES

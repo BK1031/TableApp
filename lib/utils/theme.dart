@@ -4,7 +4,7 @@ import 'package:flutter/rendering.dart';
 
 bool darkMode = false;
 
-final mainColor = Color(0xFF014F8F);
+final mainColor = Color(0xFFff9945);
 final successColor = Color(0xFF58BA5B);
 final warningColor = Color(0xFFF2C94C);
 final errorColor = Color(0xFFEB5757);

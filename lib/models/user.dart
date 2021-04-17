@@ -7,7 +7,7 @@ class User {
   String email = "";
   String phone = "";
   String gender = "";
-  String profilePicture = "https://vcrobotics.net/images/WB_App_Icon.png";
+  String profilePicture = "https://firebasestorage.googleapis.com/v0/b/table-app-calhacks.appspot.com/o/default-profile.jpeg?alt=media&token=1034f54c-f985-45a5-af92-6ad66c31c067";
 
   User();
 
