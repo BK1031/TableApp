@@ -62,6 +62,7 @@ class _RegisterPageState extends State<RegisterPage> {
             "email": currUser.email,
             "phone": currUser.phone,
             "gender": currUser.gender,
+            "bio": currUser.bio,
             "profilePicture": currUser.profilePicture,
           });
           router.navigateTo(context, "/auth", transition: TransitionType.fadeIn, clearStack: true);
