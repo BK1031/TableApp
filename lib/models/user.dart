@@ -13,7 +13,7 @@ class User {
   User();
 
   User.fromSnapshot(DataSnapshot snapshot) {
-    id = snapshot.value["id"];
+    id = snapshot.key;
     firstName = snapshot.value["firstName"];
     lastName = snapshot.value["lastName"];
     email = snapshot.value["email"];

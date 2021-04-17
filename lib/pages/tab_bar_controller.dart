@@ -1,6 +1,8 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:table/pages/groups/groups_page.dart';
 import 'package:table/pages/profile/profile_page.dart';
+import 'package:table/utils/config.dart';
 import 'package:table/utils/theme.dart';
 
 import 'home/home_page.dart';
@@ -10,7 +12,8 @@ class TabBarController extends StatefulWidget {
   _TabBarControllerState createState() => _TabBarControllerState();
 }
 
-class _TabBarControllerState extends State<TabBarController> {
+class _TabBarControllerState extends State<TabBarController> with WidgetsBindingObserver{
+
   int currTab = 0;
   Widget _homeBody = new HomePage();
   Widget _groupPage = new GroupsPage();
@@ -36,7 +39,28 @@ class _TabBarControllerState extends State<TabBarController> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     onTabTapped(0);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    FirebaseDatabase.instance.reference().child("status").child(currUser.id).update({
+      "status": "ONLINE",
+      "timestamp": DateTime.now().toUtc().toString()
+    });
+    if (state == AppLifecycleState.resumed) {
+      FirebaseDatabase.instance.reference().child("status").child(currUser.id).update({
+        "status": "ONLINE",
+        "timestamp": DateTime.now().toUtc().toString()
+      });
+    }
+    else {
+      FirebaseDatabase.instance.reference().child("status").child(currUser.id).update({
+        "status": "OFFLINE",
+        "timestamp": DateTime.now().toUtc().toString()
+      });
+    }
   }
 
   @override
