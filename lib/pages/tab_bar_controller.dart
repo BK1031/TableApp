@@ -45,10 +45,6 @@ class _TabBarControllerState extends State<TabBarController> with WidgetsBinding
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    FirebaseDatabase.instance.reference().child("status").child(currUser.id).update({
-      "status": "ONLINE",
-      "timestamp": DateTime.now().toUtc().toString()
-    });
     if (state == AppLifecycleState.resumed) {
       FirebaseDatabase.instance.reference().child("status").child(currUser.id).update({
         "status": "ONLINE",

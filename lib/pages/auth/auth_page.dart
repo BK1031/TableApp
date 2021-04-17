@@ -43,6 +43,10 @@ class _AuthPageState extends State<AuthPage> {
           print("NAME: ${currUser.firstName} ${currUser.lastName}");
           print("EMAIL: ${currUser.email}");
           print("–––––––––––––––––––––––––––––––––––––––––");
+          FirebaseDatabase.instance.reference().child("status").child(currUser.id).update({
+            "status": "ONLINE",
+            "timestamp": DateTime.now().toUtc().toString()
+          });
           if (value.value["darkMode"] != null && value.value["darkMode"]) {
             setState(() {
               darkMode = true;
