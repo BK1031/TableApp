@@ -259,7 +259,7 @@ class _FriendsPageState extends State<FriendsPage> {
                                                                 FirebaseDatabase.instance.reference().child("notifications").push().set({
                                                                   "title": "New Friend!",
                                                                   "desc": "${currUser.firstName} ${currUser.lastName} is now your friend. Click to view their profile.",
-                                                                  "link": "/profile/${incomingRequests[index].id}/friends",
+                                                                  "link": "/profile/${currUser.id}",
                                                                   "user": incomingRequests[index].id,
                                                                   "timestamp": DateTime.now().toString(),
                                                                   "read": false
