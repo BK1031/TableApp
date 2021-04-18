@@ -94,7 +94,7 @@ class _NewGroupDialogState extends State<NewGroupDialog> {
                           labelText: "Join Code",
                           hintText: "######"
                         ),
-                        keyboardType: TextInputType.number,
+                        keyboardType: TextInputType.phone,
                         textInputAction: TextInputAction.join,
                         onChanged: (input) {
                           group.id = input;
@@ -149,7 +149,6 @@ class _NewGroupDialogState extends State<NewGroupDialog> {
                               labelText: "Join Code",
                               hintText: "######"
                           ),
-                          keyboardType: TextInputType.number,
                           enabled: false,
                           textInputAction: TextInputAction.join,
                           controller: TextEditingController()..text = group.id,
