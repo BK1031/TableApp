@@ -51,15 +51,15 @@ class _FriendsPageState extends State<FriendsPage> {
 
   void getRequests() {
     FirebaseDatabase.instance.reference().child("friend-requests").onChildAdded.listen((event) {
-      if (event.snapshot.key == currUser.id) {
-        FirebaseDatabase.instance.reference().child("users").child(event.snapshot.value).once().then((value) {
+      if (event.snapshot.key.split("–")[0] == currUser.id) {
+        FirebaseDatabase.instance.reference().child("users").child(event.snapshot.key.split("–")[1]).once().then((value) {
           setState(() {
             outgoingRequests.add(new User.fromSnapshot(value));
           });
         });
       }
-      else if (event.snapshot.value == currUser.id) {
-        FirebaseDatabase.instance.reference().child("users").child(event.snapshot.key).once().then((value) {
+      else if (event.snapshot.key.split("–")[1] == currUser.id) {
+        FirebaseDatabase.instance.reference().child("users").child(event.snapshot.key.split("–")[0]).once().then((value) {
           setState(() {
             incomingRequests.add(new User.fromSnapshot(value));
           });
@@ -239,37 +239,43 @@ class _FriendsPageState extends State<FriendsPage> {
                                                     crossAxisAlignment: CrossAxisAlignment.start,
                                                     children: [
                                                       Text("${incomingRequests[index].firstName} ${incomingRequests[index].lastName}", style: TextStyle(fontSize: 18, color: currTextColor),),
-                                                      Text("${incomingRequests[index].email}", style: TextStyle(fontSize: 15, color: currDividerColor),)
+                                                      Text("${incomingRequests[index].email}", style: TextStyle(fontSize: 15, color: currDividerColor),),
+                                                      Padding(
+                                                        padding: EdgeInsets.all(4),
+                                                      ),
+                                                      Row(
+                                                        children: [
+                                                          Expanded(
+                                                            child: CupertinoButton(
+                                                              padding: EdgeInsets.zero,
+                                                              color: mainColor,
+                                                              child: Text("Accept"),
+                                                              onPressed: () {
+                                                                FirebaseDatabase.instance.reference().child("users").child(profileUser.id).child("friends").child(incomingRequests[index].id).set(incomingRequests[index].id);
+                                                                FirebaseDatabase.instance.reference().child("users").child(incomingRequests[index].id).child("friends").child(profileUser.id).set(profileUser.id);
+                                                                FirebaseDatabase.instance.reference().child("friend-requests").child("${incomingRequests[index].id}–${profileUser.id}").remove();
+                                                                setState(() {
+                                                                  incomingRequests.removeAt(index);
+                                                                });
+                                                              },
+                                                            ),
+                                                          ),
+                                                          Expanded(
+                                                            child: CupertinoButton(
+                                                              padding: EdgeInsets.zero,
+                                                              child: Text("Ignore", style: TextStyle(color: mainColor),),
+                                                              onPressed: () {
+                                                                FirebaseDatabase.instance.reference().child("friend-requests").child("${incomingRequests[index].id}–${profileUser.id}").remove();
+                                                                setState(() {
+                                                                  incomingRequests.removeAt(index);
+                                                                });
+                                                              },
+                                                            ),
+                                                          )
+                                                        ],
+                                                      )
                                                     ],
                                                   ),
-                                                ),
-                                              ),
-                                            ),
-                                            Visibility(
-                                              visible: currUser.id == profileUser.id,
-                                              child: Container(
-                                                padding: EdgeInsets.all(8),
-                                                child: Center(
-                                                    child: IconButton(
-                                                      icon: Icon(Icons.clear, color: currDividerColor,),
-                                                      onPressed: () {
-                                                        CoolAlert.show(
-                                                            context: context,
-                                                            type: CoolAlertType.confirm,
-                                                            borderRadius: 8,
-                                                            confirmBtnColor: mainColor,
-                                                            text: "Are you sure you want to remove this friend?",
-                                                            onConfirmBtnTap: () {
-                                                              FirebaseDatabase.instance.reference().child("users").child(profileUser.id).child("friends").child(friends[index].id).remove();
-                                                              FirebaseDatabase.instance.reference().child("users").child(friends[index].id).child("friends").child(profileUser.id).remove();
-                                                              setState(() {
-                                                                friends.removeAt(index);
-                                                              });
-                                                              router.pop(context);
-                                                            }
-                                                        );
-                                                      },
-                                                    )
                                                 ),
                                               ),
                                             ),
@@ -322,32 +328,28 @@ class _FriendsPageState extends State<FriendsPage> {
                                                 ),
                                               ),
                                             ),
-                                            Visibility(
-                                              visible: currUser.id == profileUser.id,
-                                              child: Container(
-                                                padding: EdgeInsets.all(8),
-                                                child: Center(
-                                                    child: IconButton(
-                                                      icon: Icon(Icons.clear, color: currDividerColor,),
-                                                      onPressed: () {
-                                                        CoolAlert.show(
-                                                            context: context,
-                                                            type: CoolAlertType.confirm,
-                                                            borderRadius: 8,
-                                                            confirmBtnColor: mainColor,
-                                                            text: "Are you sure you want to remove this friend?",
-                                                            onConfirmBtnTap: () {
-                                                              FirebaseDatabase.instance.reference().child("users").child(profileUser.id).child("friends").child(friends[index].id).remove();
-                                                              FirebaseDatabase.instance.reference().child("users").child(friends[index].id).child("friends").child(profileUser.id).remove();
-                                                              setState(() {
-                                                                friends.removeAt(index);
-                                                              });
-                                                              router.pop(context);
-                                                            }
-                                                        );
-                                                      },
-                                                    )
-                                                ),
+                                            Container(
+                                              padding: EdgeInsets.all(8),
+                                              child: Center(
+                                                  child: IconButton(
+                                                    icon: Icon(Icons.clear, color: currDividerColor,),
+                                                    onPressed: () {
+                                                      CoolAlert.show(
+                                                          context: context,
+                                                          type: CoolAlertType.confirm,
+                                                          borderRadius: 8,
+                                                          confirmBtnColor: mainColor,
+                                                          text: "Are you sure you want to remove this request?",
+                                                          onConfirmBtnTap: () {
+                                                            FirebaseDatabase.instance.reference().child("friend-requests").child("${profileUser.id}–${outgoingRequests[index].id}").remove();
+                                                            setState(() {
+                                                              outgoingRequests.removeAt(index);
+                                                            });
+                                                            router.pop(context);
+                                                          }
+                                                      );
+                                                    },
+                                                  )
                                               ),
                                             ),
                                           ],
