@@ -21,6 +21,10 @@ class ProfileEditPage extends StatefulWidget {
 class _ProfileEditPageState extends State<ProfileEditPage> {
 
   User profileUser = User();
+  TextEditingController firstNameController = new TextEditingController();
+  TextEditingController lastNameController = new TextEditingController();
+  TextEditingController bioController = new TextEditingController();
+  TextEditingController phoneController = new TextEditingController();
 
   final storageRef = FirebaseStorage.instance.ref();
 
@@ -42,24 +46,34 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
         });
         print("UPLOADING");
         UploadTask imageUploadTask = storageRef.child("users").child("${currUser.id}.png").putFile(croppedImage);
-        imageUploadTask.asStream().listen((event) {
+        imageUploadTask.snapshotEvents.listen((event) {
           print("UPLOADING: ${event.bytesTransferred.toDouble() / event.totalBytes.toDouble()}");
           setState(() {
             progress = event.bytesTransferred.toDouble() / event.totalBytes.toDouble();
           });
         });
-        imageUploadTask.whenComplete(() {
-          var downurl = imageUploadTask.snapshot.ref.getDownloadURL();
-          var url = downurl.toString();
+        imageUploadTask.whenComplete(() async {
+          var url = await storageRef.child("users").child("${currUser.id}.png").getDownloadURL();
           print(url);
           FirebaseDatabase.instance.reference().child("users").child(currUser.id).child("profilePicture").set(url);
           setState(() {
             currUser.profilePicture = url;
+            profileUser.profilePicture = url;
             uploading = false;
           });
         });
       }
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    profileUser = currUser;
+    firstNameController.text = profileUser.firstName;
+    lastNameController.text = profileUser.lastName;
+    phoneController.text = profileUser.phone;
+    bioController.text = profileUser.bio;
   }
 
   @override
@@ -72,75 +86,120 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
         elevation: 0,
       ),
       backgroundColor: currBackgroundColor,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.all(16),
-          child: Column(
-            children: [
-              Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    new Padding(padding: EdgeInsets.all(16)),
-                    new ClipRRect(
-                      borderRadius: BorderRadius.all(Radius.circular(100)),
-                      child: new Image.network(
-                        currUser.profilePicture,
-                        height: 100,
-                        width: 100,
-                      ),
-                    ),
-                    new Visibility(
-                      visible: uploading,
-                      child: Container(
-                        padding: EdgeInsets.all(16),
-                        child: new LinearProgressIndicator(
-                          value: progress,
-                        ),
-                      ),
-                    ),
-                    new Visibility(
-                      visible: !uploading,
-                      child: new CupertinoButton(
-                          child: new Text("Edit Picture", style: TextStyle(color: mainColor),),
-                          onPressed: () {
-                            pickImage();
-                          }
-                      ),
-                    ),
-                    TextField(
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8)
-                        ),
-                        labelText: "First Name",
-                      ),
-                      onChanged: (input) {
-                        currUser.firstName = input;
-                      },
-                      textCapitalization: TextCapitalization.words,
-                      keyboardType: TextInputType.name,
-                    ),
-                    Padding(padding: EdgeInsets.all(4)),
-                    TextField(
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8)
-                          ),
-                          labelText: "Last Name",
-                        ),
-                        onChanged: (input) {
-                          currUser.lastName = input;
-                        },
-                        textCapitalization: TextCapitalization.words,
-                        keyboardType: TextInputType.name
-                    ),
-                    Padding(padding: EdgeInsets.all(4)),
-                  ],
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: Container(
+        width: MediaQuery.of(context).size.width - 32,
+        child: CupertinoButton(
+          color: mainColor,
+          onPressed: () {
+            setState(() {
+              currUser = profileUser;
+            });
+            FirebaseDatabase.instance.reference().child("users").child(currUser.id).update({
+              "firstName": currUser.firstName.replaceAll(new RegExp(r"\s+\b|\b\s"), ""),
+              "lastName": currUser.lastName.replaceAll(new RegExp(r"\s+\b|\b\s"), ""),
+              "email": currUser.email,
+              "phone": currUser.phone,
+              "gender": currUser.gender,
+              "bio": currUser.bio,
+            });
+            router.pop(context);
+          },
+          child: Text("Save Changes"),
+        ),
+      ),
+      body: SingleChildScrollView(
+        padding: EdgeInsets.all(16),
+        child: Column(
+          children: [
+            new ClipRRect(
+              borderRadius: BorderRadius.all(Radius.circular(1000)),
+              child: new CachedNetworkImage(
+                imageUrl: currUser.profilePicture,
+                height: 100,
+                width: 100,
+              ),
+            ),
+            new Visibility(
+              visible: uploading,
+              child: Container(
+                padding: EdgeInsets.all(16),
+                child: new LinearProgressIndicator(
+                  value: progress,
                 ),
               ),
-            ],
-          ),
+            ),
+            new Visibility(
+              visible: !uploading,
+              child: new CupertinoButton(
+                  child: new Text("Edit Picture", style: TextStyle(color: mainColor),),
+                  onPressed: () {
+                    pickImage();
+                  }
+              ),
+            ),
+            TextField(
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8)
+                ),
+                labelText: "First Name",
+              ),
+              onChanged: (input) {
+                profileUser.firstName = input;
+              },
+              textCapitalization: TextCapitalization.words,
+              keyboardType: TextInputType.name,
+              controller: firstNameController,
+            ),
+            Padding(padding: EdgeInsets.all(4)),
+            TextField(
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8)
+                ),
+                labelText: "Last Name",
+              ),
+              onChanged: (input) {
+                profileUser.lastName = input;
+              },
+              textCapitalization: TextCapitalization.words,
+              keyboardType: TextInputType.name,
+              controller: lastNameController,
+            ),
+            Padding(padding: EdgeInsets.all(4)),
+            Padding(padding: EdgeInsets.all(4)),
+            TextField(
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8)
+                ),
+                labelText: "Phone Number",
+              ),
+              onChanged: (input) {
+                profileUser.phone = input;
+              },
+              keyboardType: TextInputType.phone,
+              controller: phoneController,
+            ),
+            Padding(padding: EdgeInsets.all(4)),
+            TextField(
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8)
+                ),
+                labelText: "Bio",
+              ),
+              maxLines: null,
+              onChanged: (input) {
+                profileUser.bio = input;
+              },
+              textCapitalization: TextCapitalization.sentences,
+              keyboardType: TextInputType.multiline,
+              controller: bioController,
+            ),
+            Padding(padding: EdgeInsets.all(32)),
+          ],
         ),
       ),
     );

@@ -71,7 +71,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       new ListTile(
                         title: new Text("Edit Profile", style: TextStyle(color: mainColor), textAlign: TextAlign.center,),
                         onTap: () {
-                          router.navigateTo(context, '/profile/edit', transition: TransitionType.nativeModal);
+                          router.navigateTo(context, '/profile/${currUser.id}/edit', transition: TransitionType.nativeModal);
                         },
                       )
                     ],

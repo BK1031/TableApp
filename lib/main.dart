@@ -40,7 +40,7 @@ Future<void> main() async {
   router.define('/profile/:id', handler: new Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) {
     return new ProfilePage(params["id"][0]);
   }));
-  router.define('/profile/edit', handler: new Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) {
+  router.define('/profile/:id/edit', handler: new Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) {
     return new ProfileEditPage();
   }));
 
