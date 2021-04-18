@@ -47,8 +47,8 @@ Future<void> main() async {
   router.define('/groups/:id', handler: new Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) {
     return new GroupDetailsPage(params["id"][0]);
   }));
-  router.define('/groups/:groupid/events/:eventid', handler: new Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) {
-    return new EventInfoPage(params["groupid"][0], params["eventid"][0]);
+  router.define('/groups/:id/:groupid/events/:eventid', handler: new Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) {
+    return new EventInfoPage(params["groupid"][0], params["eventid"][0], params["id"][0]);
   }));
 
   // PROFILE ROUTES
