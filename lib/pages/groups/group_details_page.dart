@@ -1,5 +1,7 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:fluro/fluro.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:table/models/group.dart';
 import 'package:table/models/user.dart';
@@ -18,6 +20,9 @@ class GroupDetailsPage extends StatefulWidget {
 class _GroupDetailsPageState extends State<GroupDetailsPage> {
 
   Group group = new Group();
+
+  int page = 0;
+  PageController pageController = new PageController();
 
   _GroupDetailsPageState(String id) {
     group.id = id;
@@ -61,13 +66,115 @@ class _GroupDetailsPageState extends State<GroupDetailsPage> {
             Text("Group ID: ${group.id}", style: TextStyle(color: currTextColor, fontSize: 18),),
             Padding(padding: EdgeInsets.all(4),),
             Text(group.desc, style: TextStyle(color: currDividerColor, fontSize: 18)),
-            Padding(padding: EdgeInsets.all(4),),
-            Container(height: 200,),
-            Text("Chat", style: TextStyle(color: currTextColor, fontSize: 18, fontWeight: FontWeight.bold),),
-            Padding(padding: EdgeInsets.all(4),),
-            new Expanded(
-              child: ChatPage(group.id),
-            )
+            Padding(padding: EdgeInsets.all(8),),
+            Row(
+              children: [
+                Expanded(
+                  child: CupertinoButton(
+                    color: page == 0 ? mainColor : currBackgroundColor,
+                    padding: EdgeInsets.all(0),
+                    child: Text("Details", style: TextStyle(color: page == 0 ? Colors.white : currTextColor),),
+                    onPressed: () {
+                      setState(() {
+                        page = 0;
+                      });
+                      pageController.animateToPage(0, duration: const Duration(milliseconds: 100), curve: Curves.easeOut);
+                    },
+                  ),
+                ),
+                Expanded(
+                  child: CupertinoButton(
+                    color: page == 1 ? mainColor : currBackgroundColor,
+                    padding: EdgeInsets.all(0),
+                    child: Text("Chat", style: TextStyle(color: page == 1 ? Colors.white : currTextColor),),
+                    onPressed: () {
+                      setState(() {
+                        page = 1;
+                      });
+                      pageController.animateToPage(1, duration: const Duration(milliseconds: 100), curve: Curves.easeOut);
+                    },
+                  ),
+                ),
+                Expanded(
+                  child: CupertinoButton(
+                    color: page == 2 ? mainColor : currBackgroundColor,
+                    padding: EdgeInsets.all(0),
+                    child: Text("Members", style: TextStyle(color: page == 2 ? Colors.white : currTextColor),),
+                    onPressed: () {
+                      setState(() {
+                        page = 2;
+                      });
+                      pageController.animateToPage(2, duration: const Duration(milliseconds: 100), curve: Curves.easeOut);
+                    },
+                  ),
+                )
+              ],
+            ),
+            Padding(padding: EdgeInsets.all(8),),
+            Expanded(
+              child: PageView(
+                controller: pageController,
+                onPageChanged: (int) {
+                  setState(() {
+                    page = int;
+                  });
+                },
+                children: [
+                  Container(
+
+                  ),
+                  ChatPage(group.id),
+                  Container(
+                    child: ListView.builder(
+                      itemCount: group.users.length,
+                      itemBuilder: (context, index) => Container(
+                          padding: EdgeInsets.only(bottom: 8),
+                          child: Card(
+                            color: currCardColor,
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(8),
+                              onTap: () {
+                                if (group.users[index].id != currUser.id) {
+                                  router.navigateTo(context, "/profile/${group.users[index].id}", transition: TransitionType.nativeModal);
+                                }
+                              },
+                              child: Container(
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      padding: EdgeInsets.all(8),
+                                      child: Center(
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.circular(1000),
+                                          child: CachedNetworkImage(imageUrl: group.users[index].profilePicture, height: 65, width: 65),
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Container(
+                                        padding: EdgeInsets.all(8),
+                                        child: Center(
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text("${group.users[index].firstName} ${group.users[index].lastName}", style: TextStyle(fontSize: 18, color: currTextColor),),
+                                              Text("${group.users[index].email}", style: TextStyle(fontSize: 15, color: currDividerColor),)
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          )
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
           ],
         ),
       ),

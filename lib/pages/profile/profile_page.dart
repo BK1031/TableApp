@@ -72,7 +72,7 @@ class _ProfilePageState extends State<ProfilePage> with RouteAware {
               }
               else {
                 setState(() {
-                  friendStatus = "NOT_FRIENDS";
+                  friendStatus = "NOT_FRIEND";
                 });
               }
             });
@@ -269,6 +269,7 @@ class _ProfilePageState extends State<ProfilePage> with RouteAware {
                   ),
                   color: friendStatus == "NOT_FRIEND" ? mainColor : Colors.transparent,
                   onPressed: () {
+                    print(friendStatus);
                     if (friendStatus == "NOT_FRIEND") {
                       FirebaseDatabase.instance.reference().child("friend-requests").child("${currUser.id}–${profileUser.id}").set("${currUser.id}–${profileUser.id}");
                       checkFriendStatus();

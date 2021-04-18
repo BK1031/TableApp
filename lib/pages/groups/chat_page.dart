@@ -54,7 +54,7 @@ class _ChatPageState extends State<ChatPage> {
         curve: Curves.easeOut,
       );
     });
-    FirebaseDatabase.instance.reference().child("groups").child(id).child("chat").onChildAdded.listen((event) {
+    FirebaseDatabase.instance.reference().child("groups").child(id).child("chat").onChildAdded.listen((event) async {
       Message message = new Message.fromSnapshot(event.snapshot);
       FirebaseDatabase.instance.reference().child("users").child(message.author.id).once().then((value) {
         message.author = new User.fromSnapshot(value);
@@ -63,9 +63,7 @@ class _ChatPageState extends State<ChatPage> {
           // Add the actual chat message widget
           if (chatList.length > 1 && message.author.id == chatList[chatList.length - 2].author.id &&  message.date.difference(chatList[chatList.length - 2].date).inMinutes.abs() < 5) {
             widgetList.add(new InkWell(
-              onLongPress: () {
-
-              },
+              onLongPress: () {},
               child: new Container(
                 padding: EdgeInsets.only(left: 12, right: 15),
                 child: Row(
@@ -86,9 +84,7 @@ class _ChatPageState extends State<ChatPage> {
           }
           else {
             widgetList.add(new InkWell(
-              onLongPress: () {
-
-              },
+              onLongPress: () {},
               child: new Container(
                 padding: EdgeInsets.only(left: 12, top: 8, right: 15),
                 child: Row(
@@ -141,7 +137,7 @@ class _ChatPageState extends State<ChatPage> {
             ));
           }
         });
-        Future.delayed(const Duration(milliseconds: 200), () {
+        Future.delayed(const Duration(milliseconds: 100), () {
           _scrollController.animateTo(
             _scrollController.position.maxScrollExtent + 20.0,
             duration: const Duration(milliseconds: 300),
