@@ -5,6 +5,7 @@ import 'package:fluro/fluro.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
+import 'package:table/models/group.dart';
 import 'package:table/models/user.dart';
 import 'package:table/utils/config.dart';
 import 'package:table/utils/theme.dart';
@@ -21,7 +22,7 @@ class _ProfilePageState extends State<ProfilePage> with RouteAware {
 
   User profileUser = User();
 
-  int events = 0;
+  int events = 6;
   int friends = 0;
   int groups = 0;
 
@@ -34,6 +35,7 @@ class _ProfilePageState extends State<ProfilePage> with RouteAware {
         profileUser = new User.fromSnapshot(value);
       });
       getFriends();
+      getGroups();
       if (profileUser.id != currUser.id) {
         checkFriendStatus();
       }
@@ -46,6 +48,18 @@ class _ProfilePageState extends State<ProfilePage> with RouteAware {
       setState(() {
         friends = value.value.keys.length;
       });
+    });
+  }
+
+  void getGroups() {
+    groups = 0;
+    FirebaseDatabase.instance.reference().child("groups").onChildAdded.listen((event) async {
+      if (event.snapshot.value["users"][currUser.id] != null) {
+        Group group = new Group.fromSnapshot(event.snapshot);
+        setState(() {
+          groups++;
+        });
+      }
     });
   }
 
@@ -153,6 +167,7 @@ class _ProfilePageState extends State<ProfilePage> with RouteAware {
         profileUser = new User.fromSnapshot(value);
       });
       getFriends();
+      getGroups();
       if (profileUser.id != currUser.id) {
         checkFriendStatus();
       }
