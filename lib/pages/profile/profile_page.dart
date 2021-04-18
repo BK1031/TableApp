@@ -25,6 +25,8 @@ class _ProfilePageState extends State<ProfilePage> with RouteAware{
   int friends = 0;
   int groups = 0;
 
+  String friendStatus = "NOT_FRIEND";
+
   _ProfilePageState(String id) {
     profileUser.id = id;
     FirebaseDatabase.instance.reference().child("users").child(profileUser.id).once().then((value) {
@@ -32,6 +34,9 @@ class _ProfilePageState extends State<ProfilePage> with RouteAware{
         profileUser = new User.fromSnapshot(value);
       });
       getFriends();
+      if (profileUser.id != currUser.id) {
+        checkFriendStatus();
+      }
     });
   }
 
@@ -42,6 +47,40 @@ class _ProfilePageState extends State<ProfilePage> with RouteAware{
         friends = value.value.keys.length;
       });
     });
+  }
+
+  Future<void> checkFriendStatus() async {
+    await FirebaseDatabase.instance.reference().child("users").child(profileUser.id).child("friends").child(currUser.id).once().then((value) async {
+      if (value.value != null) {
+        setState(() {
+          friendStatus = "FRIEND";
+        });
+      }
+      else {
+        await FirebaseDatabase.instance.reference().child("friend-requests").child("${currUser.id}–${profileUser.id}").once().then((value) async {
+          if (value.value != null) {
+            setState(() {
+              friendStatus = "REQUESTED";
+            });
+          }
+          else {
+            await FirebaseDatabase.instance.reference().child("friend-requests").child("${profileUser.id}–${currUser.id}").once().then((value) {
+              if (value.value != null) {
+                setState(() {
+                  friendStatus = "REQUESTED";
+                });
+              }
+              else {
+                setState(() {
+                  friendStatus = "NOT_FRIENDS";
+                });
+              }
+            });
+          }
+        });
+      }
+    });
+    print(friendStatus);
   }
 
   void showSettingsMenu() {
@@ -114,6 +153,9 @@ class _ProfilePageState extends State<ProfilePage> with RouteAware{
         profileUser = new User.fromSnapshot(value);
       });
       getFriends();
+      if (profileUser.id != currUser.id) {
+        checkFriendStatus();
+      }
     });
   }
 
@@ -217,6 +259,25 @@ class _ProfilePageState extends State<ProfilePage> with RouteAware{
                 ],
               ),
             ),
+            Visibility(
+              visible: profileUser.id != currUser.id,
+              child: Container(
+                width: double.infinity,
+                child: CupertinoButton(
+                  child: Text(
+                    friendStatus == "NOT_FRIEND" ? "Add Friend" : friendStatus == "REQUESTED" ? "Requested" : "Friends",
+                    style: TextStyle(color: friendStatus == "NOT_FRIEND" ? Colors.white : mainColor),
+                  ),
+                  color: friendStatus == "NOT_FRIEND" ? mainColor : Colors.transparent,
+                  onPressed: () {
+                    if (friendStatus == "NOT_FRIEND") {
+                      FirebaseDatabase.instance.reference().child("friend-requests").child("${currUser.id}–${profileUser.id}").set("${currUser.id}–${profileUser.id}");
+                      checkFriendStatus();
+                    }
+                  },
+                ),
+              ),
+            )
           ],
         ),
       ),
