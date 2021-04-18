@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:table/pages/auth/auth_page.dart';
 import 'package:table/pages/auth/login_page.dart';
 import 'package:table/pages/auth/register_page.dart';
+import 'package:table/pages/groups/event_info_page.dart';
+import 'package:table/pages/groups/groups_page.dart';
 import 'package:table/pages/profile/friends_page.dart';
 import 'package:table/pages/profile/profile_edit_page.dart';
 import 'package:table/pages/profile/profile_page.dart';
@@ -37,6 +39,14 @@ Future<void> main() async {
     return new TabBarController();
   }));
 
+  // GROUPS ROUTES
+  router.define('/groups', handler: new Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) {
+    return new GroupsPage();
+  }));
+  router.define('/groups/:groupid/events/:eventid', handler: new Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) {
+    return new EventInfoPage(params["groupid"][0], params["eventid"][0]);
+  }));
+
   // PROFILE ROUTES
   router.define('/profile/:id', handler: new Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) {
     return new ProfilePage(params["id"][0]);
@@ -59,7 +69,7 @@ Future<void> main() async {
   runApp(new MaterialApp(
     debugShowCheckedModeBanner: false,
     theme: mainTheme,
-    initialRoute: '/auth',
+    initialRoute: 'auth',
     title: "Table",
     onGenerateRoute: router.generator,
     navigatorObservers: [routeObserver],
