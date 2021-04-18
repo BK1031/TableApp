@@ -31,6 +31,16 @@ class _ProfilePageState extends State<ProfilePage> with RouteAware{
       setState(() {
         profileUser = new User.fromSnapshot(value);
       });
+      getFriends();
+    });
+  }
+
+  void getFriends() {
+    FirebaseDatabase.instance.reference().child("users").child(profileUser.id).child("friends").once().then((value) {
+      print(value.value.keys.length.toString() + "friend detected");
+      setState(() {
+        friends = value.value.keys.length;
+      });
     });
   }
 
@@ -98,10 +108,12 @@ class _ProfilePageState extends State<ProfilePage> with RouteAware{
 
   @override
   void didPopNext() {
+    print("refrshing profile pge");
     FirebaseDatabase.instance.reference().child("users").child(profileUser.id).once().then((value) {
       setState(() {
         profileUser = new User.fromSnapshot(value);
       });
+      getFriends();
     });
   }
 
@@ -110,7 +122,10 @@ class _ProfilePageState extends State<ProfilePage> with RouteAware{
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
+        iconTheme: IconThemeData(
+          color: currDividerColor, //change your color here
+        ),
+        automaticallyImplyLeading: currUser.id != profileUser.id,
         title: Text("Profile", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25, color: mainColor),),
         backgroundColor: currBackgroundColor,
         elevation: 0,
@@ -183,12 +198,17 @@ class _ProfilePageState extends State<ProfilePage> with RouteAware{
                               )
                           ),
                           Expanded(
-                              child: Column(
-                                children: [
-                                  Text("Friends", style: TextStyle(color: currDividerColor, fontSize: 18),),
-                                  Padding(padding: EdgeInsets.all(4),),
-                                  Text("$friends", style: TextStyle(color: mainColor, fontSize: 25, fontWeight: FontWeight.bold),)
-                                ],
+                              child: GestureDetector(
+                                onTap: () {
+                                  router.navigateTo(context, "/profile/${profileUser.id}/friends", transition: TransitionType.nativeModal);
+                                },
+                                child: Column(
+                                  children: [
+                                    Text("Friends", style: TextStyle(color: currDividerColor, fontSize: 18),),
+                                    Padding(padding: EdgeInsets.all(4),),
+                                    Text("$friends", style: TextStyle(color: mainColor, fontSize: 25, fontWeight: FontWeight.bold),)
+                                  ],
+                                ),
                               )
                           )
                         ],
