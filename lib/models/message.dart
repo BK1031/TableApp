@@ -1,8 +1,9 @@
 import 'package:firebase_database/firebase_database.dart';
+import 'package:table/models/user.dart';
 
 class Message {
     String id = "";
-    String uid = "";
+    User author = new User();
     String timestamp = "";
     String text = "";
 
@@ -10,7 +11,7 @@ class Message {
 
     Message.fromSnapshot(DataSnapshot snapshot) {
         id = snapshot.key;
-        uid = snapshot.value["user"];
+        author.id = snapshot.value["user"];
         text = snapshot.value["text"];
     }
 }

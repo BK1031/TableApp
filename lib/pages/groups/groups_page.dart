@@ -1,4 +1,8 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:table/models/group.dart';
+import 'package:table/models/user.dart';
+import 'package:table/utils/config.dart';
 import 'package:table/utils/theme.dart';
 import 'hero_dialog_route.dart';
 
@@ -8,6 +12,41 @@ class GroupsPage extends StatefulWidget {
 }
 
 class _GroupsPageState extends State<GroupsPage> {
+
+  List<Group> groups = [];
+
+
+  @override
+  void initState() {
+    super.initState();
+    getGroups();
+  }
+
+  getGroups() {
+    FirebaseDatabase.instance.reference().child("groups").onChildAdded.listen((event) {
+      if (event.snapshot.value["users"][currUser.id] != null) {
+        Group group = new Group.fromSnapshot(event.snapshot);
+        event.snapshot.value["users"].keys.forEach((id) async {
+          await FirebaseDatabase.instance.reference().child("users").child(id).once().then((value) {
+              User user = new User.fromSnapshot(value);
+              group.users.add(user);
+          });
+        });
+        setState(() {
+          groups.add(group);
+        });
+      }
+    });
+  }
+
+  String getNamesPreview(List<User> users) {
+    String returnString = "";
+    for (int i = 0; i < users.length; i++) {
+      returnString += users[i].firstName;
+
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,112 +57,31 @@ class _GroupsPageState extends State<GroupsPage> {
         elevation: 0,
         centerTitle: false
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.of(context).push(HeroDialogRoute(builder: (context) {
-            return const _AddTodoPopupCard();
-          }));
-        },
-        child: const Icon(Icons.add),
-        backgroundColor: mainColor,
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.all(16),
-          child: Column(
-            children: [
-              Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Card(
-                      child:Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          InkWell(
-                            onTap: () {
-                              print("tapped");
-                            },
-                            child: Container(
-                              height: 80,
-                              width: 400,
-                              child: const ListTile(
-                                  leading: Icon(Icons.people),
-                                  title: Text('Group 1'),
-                                  subtitle: Text('Bharat, Thomas, Kashyap, Rohan'),
-                              ),
-                            ),
-                          )
-                        ]
+      body: ListView.builder(
+        padding: EdgeInsets.all(16),
+        itemCount: groups.length,
+        itemBuilder: (context, index) => Container(
+          child: Card(
+            color: currCardColor,
+            child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  InkWell(
+                    borderRadius: BorderRadius.circular(8),
+                    onTap: () {
+
+                    },
+                    child: Container(
+                      height: 80,
+                      width: 400,
+                      child: ListTile(
+                        leading: Icon(Icons.people, color: currDividerColor,),
+                        title: Text(groups[index].name, style: TextStyle(color: currTextColor, fontSize: 20),),
+                        subtitle: Text("", style: TextStyle(color: currTextColor, fontSize: 20),),
                       ),
                     ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-const String _heroAddTodo = 'add-todo-hero';
-
-class _AddTodoPopupCard extends StatelessWidget {
-  /// {@macro add_todo_popup_card}
-  const _AddTodoPopupCard({Key key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32.0),
-        child: Hero(
-          tag: _heroAddTodo,
-          child: Material(
-            color: lightBackgroundColor,
-            elevation: 2,
-            shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const TextField(
-                      decoration: InputDecoration(
-                        hintText: 'New Group',
-                        border: InputBorder.none,
-                      ),
-                      cursorColor: Color(0xFFff992b),
-                    ),
-                    const Divider(
-                      color: Color(0xFFff992b),
-                      thickness: 0.2,
-                    ),
-                    const TextField(
-                      decoration: InputDecoration(
-                        hintText: 'Group Description',
-                        border: InputBorder.none,
-                      ),
-                      cursorColor: Color(0xFFff992b),
-                      maxLines: 6,
-                    ),
-                    const Divider(
-                      color: Colors.white,
-                      thickness: 0.2,
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pop(context, false);
-                      },
-                      child: const Text('Done'),
-                    ),
-                  ],
-                ),
-              ),
+                  )
+                ]
             ),
           ),
         ),
