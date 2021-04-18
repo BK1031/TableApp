@@ -88,7 +88,7 @@ class _AuthPageState extends State<AuthPage> {
         body: new Container(
           child: Center(
             child: new HeartbeatProgressIndicator(
-              child: new Image.asset("images/table-logo.png", height: 50,),
+              child: new Image.asset("images/table-logo.png", height: 50, color: mainColor,),
             ),
           ),
         ),
@@ -106,6 +106,7 @@ class _AuthPageState extends State<AuthPage> {
                 child: Image.asset(
                   'images/table-logo.png',
                   height: 50,
+                  color: mainColor,
                 ),
               ),
               new Column(

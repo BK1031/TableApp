@@ -2,10 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Location access is required to see nearby activities and view group locations!</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Location access is required to see nearby activities and view group locations!</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>
@@ -26,6 +22,21 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>Photo Library access required to add photos, update your profile picture, or scan permission codes</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Location access is required to see nearby activities and view group locations!</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Location access is required to see nearby activities and view group locations!</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Microphone access required to take and upload videos</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Photo Library access required to add photos, update your profile picture, or scan permission codes</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>remote-notification</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
@@ -45,11 +56,5 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Photo Library access required to add photos, update your profile picture, or scan permission codes</string>
-	<key>NSCameraUsageDescription</key>
-	<string>Photo Library access required to add photos, update your profile picture, or scan permission codes</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>Microphone access required to take and upload videos</string>
 </dict>
 </plist>
