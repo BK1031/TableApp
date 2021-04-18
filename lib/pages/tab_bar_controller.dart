@@ -75,7 +75,7 @@ class _TabBarControllerState extends State<TabBarController> with WidgetsBinding
 
     if (settings.authorizationStatus == AuthorizationStatus.authorized) {
       print('User granted permission');
-      String token = await FirebaseMessaging.instance.getAPNSToken();
+      String token = await FirebaseMessaging.instance.getToken();
       FirebaseDatabase.instance.reference().child("users").child(currUser.id).child("fcmToken").set(token);
       FirebaseMessaging.instance.subscribeToTopic("ALL_DEVICES");
     } else if (settings.authorizationStatus == AuthorizationStatus.provisional) {
