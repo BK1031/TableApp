@@ -112,7 +112,7 @@ class _AddTodoPopupCard extends StatelessWidget {
                       maxLines: 6,
                     ),
                     const Divider(
-                      color: Colors.white,
+                      color: Color(0xFFff992b),
                       thickness: 0.2,
                     ),
                     TextButton(
