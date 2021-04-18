@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
 import 'package:firebase_database/firebase_database.dart';
 import 'package:fluro/fluro.dart';
@@ -41,6 +42,7 @@ class _ProfilePageState extends State<ProfilePage> {
       builder: (context) => Container(
         padding: EdgeInsets.all(8),
         child: Card(
+          color: currCardColor,
           child: Container(
             padding: EdgeInsets.all(8),
             child: Column(
@@ -52,6 +54,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   title: Text("Edit Profile", style: TextStyle(color: currTextColor),),
                   onTap: () {
                     router.pop(context);
+                    router.navigateTo(context, "/profile/edit", transition: TransitionType.nativeModal);
                   },
                 ),
                 ListTile(
@@ -102,6 +105,7 @@ class _ProfilePageState extends State<ProfilePage> {
           )
         ],
       ),
+      backgroundColor: currBackgroundColor,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: EdgeInsets.all(16),
@@ -115,7 +119,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       child: Center(
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(1000),
-                          child: Image.network(profileUser.profilePicture, height: 125, width: 125,),
+                          child: Image.network(profileUser.profilePicture, height: 125, width: 125),
                         ),
                       ),
                     ),
