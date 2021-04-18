@@ -1,11 +1,21 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:table/utils/theme.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 class HomePage extends StatefulWidget {
+  String id;
+  HomePage(this.id);
   @override
-  _HomePageState createState() => _HomePageState();
+  _HomePageState createState() => _HomePageState(id);
 }
 
 class _HomePageState extends State<HomePage> {
+  String userid;
+
+  List<Map<String, String>> upcomingEvents = [];
+  List<Map<String, String>> notifications = [];
+
   List<String> shortcutsList = ["Join a group", "Add a new friend", "Send a message in ", "Suggest an event in "];
 
   Row makeCurrentEventRow (List<Map<String, String>> upcomingEvents) {
@@ -60,7 +70,8 @@ class _HomePageState extends State<HomePage> {
                           border: Border.all(
                               color: Colors.grey,
                               width: 2
-                          )
+                          ),
+                        color: currCardColor
                       ),
 
                       child: Center(
@@ -72,8 +83,9 @@ class _HomePageState extends State<HomePage> {
                                       time,
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
-                                          fontSize: widgetSize/4,
-                                          fontWeight: FontWeight.bold
+                                        fontSize: widgetSize/4,
+                                        fontWeight: FontWeight.bold,
+                                        color: currTextColor
                                       ),
                                     ),
                                     !today ? Container() : Text(
@@ -81,7 +93,8 @@ class _HomePageState extends State<HomePage> {
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                           fontSize: widgetSize/8,
-                                          fontWeight: FontWeight.bold
+                                          fontWeight: FontWeight.bold,
+                                          color: currTextColor
                                       ),
                                     )
                                   ]
@@ -110,7 +123,8 @@ class _HomePageState extends State<HomePage> {
                       border: Border.all(
                           color: Colors.grey,
                           width: 2
-                      )
+                      ),
+                      color: currCardColor,
                   ),
 
                   child: Center(
@@ -123,7 +137,8 @@ class _HomePageState extends State<HomePage> {
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                       fontSize: widgetSize/4,
-                                      fontWeight: FontWeight.bold
+                                      fontWeight: FontWeight.bold,
+                                      color: currTextColor
                                   ),
                                 ),
                                 !today ? Container() : Text(
@@ -131,7 +146,8 @@ class _HomePageState extends State<HomePage> {
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                       fontSize: widgetSize/8,
-                                      fontWeight: FontWeight.bold
+                                      fontWeight: FontWeight.bold,
+                                      color: currTextColor
                                   ),
                                 )
                               ]
@@ -196,67 +212,66 @@ class _HomePageState extends State<HomePage> {
         time = date.month.toString() + "/" + date.day.toString();
       }
 
-      notificationWidgets.add(new Container(
-          padding: EdgeInsets.all(15),
-          child: ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: Container(
-                  height: 100,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                          color: Colors.grey,
-                          width: 2
-                      )
-                  ),
-
-                  child: Center(
-                      child: Container(
-                          height: 100,
-                          padding: EdgeInsets.all(15),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+      notificationWidgets.add(new Card(
+          child: Container(
+              /*height: 100,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                      color: Colors.grey,
+                      width: 2
+                  )
+              ),*/
+              child: Center(
+                  child: Container(
+                      height: 100,
+                      padding: EdgeInsets.all(15),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
                             children: [
-                              Row(
-                                children: [
-                                  Expanded(
-                                      child: Text(
-                                        notifications[i]["groupname"],
-                                        textAlign: TextAlign.left,
-                                        style: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold
-                                        ),
-                                      )
-                                  ),
-
-                                  Expanded(
-                                    child: Text(
-                                      time,
-                                      textAlign: TextAlign.right,
-                                      style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold
-                                      ),
+                              Expanded(
+                                  child: Text(
+                                    notifications[i]["groupname"],
+                                    textAlign: TextAlign.left,
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: currTextColor
                                     ),
                                   )
-                                ]
                               ),
 
-                              Text(
-                                notifications[i]["text"],
-                                textAlign: TextAlign.left,
-                                style: TextStyle(
-                                  fontSize: 20,
+                              Expanded(
+                                child: Text(
+                                  time,
+                                  textAlign: TextAlign.right,
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      color: currTextColor
+                                  ),
                                 ),
                               )
                             ]
+                          ),
+
+                          Text(
+                            notifications[i]["text"],
+                            textAlign: TextAlign.left,
+                            style: TextStyle(
+                              fontSize: 20,
+                              color: currTextColor
+                            ),
                           )
+                        ]
                       )
                   )
               )
           )
-      ));
+      )
+      );
     }
 
     return Expanded (
@@ -267,10 +282,37 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  _HomePageState (String id) {
+    userid = id;
+
+    FirebaseDatabase.instance.reference().child("groups").once().then((value) {
+      var groups = Map<String, dynamic>.from(value.value);
+      groups.forEach((key, groupInfo) {
+        var users = groupInfo["users"];
+        if (users.keys.contains(userid)) {
+          if (groupInfo.keys.contains("events")) {
+            List<String> eventKeys = List<String>.from(groupInfo["events"].keys);
+            eventKeys.forEach((eventKey) {
+              Map<String, String> eventInfo = Map<String, String>.from(groupInfo["events"][eventKey]);
+              if (eventInfo["status"] != "previous") {
+                setState(() {
+                  upcomingEvents.add({
+                    "id": eventKey,
+                    "time": eventInfo["time"]
+                  });
+                });
+              }
+            });
+          }
+        }
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    List<Map<String, String>> upcomingEvents = [{"id": "1", "time": "2021-04-17 16:30:00.000000"}, {"id": "2", "time": "2021-04-17 18:30:00.000000"}, {"id": "3", "time": "2021-04-18 16:30:00.000000"}];
-    List<Map<String, String>> notifications = [{"id": "1", "groupid": "g1", "groupname": "group 1", "text": "New message in group", "time": "2021-04-17 12:30:00.000000"}, {"id": "1", "groupid": "g1", "groupname": "group 1", "text": "New suggestion in group", "time": "2021-04-17 10:30:00.000000"}];
+    //upcomingEvents = [{"id": "1", "time": "2021-04-17 16:30:00.000000"}, {"id": "2", "time": "2021-04-17 18:30:00.000000"}, {"id": "3", "time": "2021-04-18 16:30:00.000000"}];
+    notifications = [{"id": "1", "groupid": "g1", "groupname": "group 1", "text": "New message in group", "time": "2021-04-17 12:30:00.000000"}, {"id": "1", "groupid": "g1", "groupname": "group 1", "text": "New suggestion in group", "time": "2021-04-17 10:30:00.000000"}];
 
     return Container(
       padding: EdgeInsets.only(top: 60),
@@ -281,6 +323,7 @@ class _HomePageState extends State<HomePage> {
               "Upcoming Events",
               style: TextStyle(
                 fontSize: 30,
+                color: currTextColor
               ),
             ),
           ),
@@ -296,6 +339,7 @@ class _HomePageState extends State<HomePage> {
               "Notifications",
               style: TextStyle(
                 fontSize: 30,
+                color: currTextColor
               ),
             ),
           ),
