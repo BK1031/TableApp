@@ -69,7 +69,7 @@ Future<void> main() async {
   runApp(new MaterialApp(
     debugShowCheckedModeBanner: false,
     theme: mainTheme,
-    initialRoute: 'auth',
+    initialRoute: '/auth',
     title: "Table",
     onGenerateRoute: router.generator,
     navigatorObservers: [routeObserver],

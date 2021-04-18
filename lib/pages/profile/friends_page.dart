@@ -238,8 +238,8 @@ class _FriendsPageState extends State<FriendsPage> {
                                                   child: Column(
                                                     crossAxisAlignment: CrossAxisAlignment.start,
                                                     children: [
-                                                      Text("${friends[index].firstName} ${friends[index].lastName}", style: TextStyle(fontSize: 18, color: currTextColor),),
-                                                      Text("${friends[index].email}", style: TextStyle(fontSize: 15, color: currDividerColor),)
+                                                      Text("${incomingRequests[index].firstName} ${incomingRequests[index].lastName}", style: TextStyle(fontSize: 18, color: currTextColor),),
+                                                      Text("${incomingRequests[index].email}", style: TextStyle(fontSize: 15, color: currDividerColor),)
                                                     ],
                                                   ),
                                                 ),
