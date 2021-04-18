@@ -8,6 +8,13 @@ import 'package:table/utils/config.dart';
 import 'package:table/utils/theme.dart';
 import 'package:firebase_database/firebase_database.dart';
 
+
+extension StringExtension on String {
+  String capitalize() {
+    return "${this[0].toUpperCase()}${this.substring(1)}";
+  }
+}
+
 class EventInfoPage extends StatefulWidget {
   String eventid;
   String groupid;
@@ -32,6 +39,7 @@ class _EventInfoPageState extends State<EventInfoPage> {
   1 votes
   total votes
    */
+
 
   List<Widget> sectionWidgets = [];
 
@@ -508,7 +516,9 @@ class _EventInfoPageState extends State<EventInfoPage> {
               child: Text(
                 sectionName.substring(1) + ":",
                 style: TextStyle(
-                    fontSize: 30
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: currTextColor
                 ),
                 textAlign: TextAlign.left,
               ),
@@ -546,10 +556,11 @@ class _EventInfoPageState extends State<EventInfoPage> {
             sectionWidgets.add(Container(
               padding: EdgeInsets.only(top: 10),
               child: Text(
-                sectionName.substring(1) + ":",
+                sectionName.substring(1).capitalize(),
                 style: TextStyle(
-                    fontSize: 30,
-                  color: currTextColor
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: currTextColor
                 ),
                 textAlign: TextAlign.left,
               ),
@@ -622,85 +633,97 @@ class _EventInfoPageState extends State<EventInfoPage> {
       );
     }
     
-    return Container(
-      padding: EdgeInsets.fromLTRB(30, 60, 30, 20),
-      child: Column(
-        children: [
-          sectionsWidget,
-          Expanded(child: Container()),
-          Container(
-            height: 50,
-            child: CupertinoButton(
-              color: mainColor,
-              child: Text(
-                "I'm going!"
-              ),
-              onPressed: (){ showDialog(context: context, builder: (context) => AlertDialog(
-                backgroundColor: currCardColor,
-                content: AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  curve: Curves.easeOut,
-                  height: 200,
-                  width: 1000,
-                  child: Column(
-                    children: [
-                      Text(
-                        "Are you sure?",
-                        style: TextStyle(
-                          fontSize: 30
+    return Scaffold(
+        appBar: AppBar(
+          iconTheme: IconThemeData(
+            color: currDividerColor, //change your color here
+          ),
+          title: Text("Planning Table", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: mainColor),),
+          backgroundColor: currBackgroundColor,
+          elevation: 0,
+        ),
+      backgroundColor: currBackgroundColor,
+      body: Container(
+        padding: EdgeInsets.fromLTRB(16, 16, 0, 32),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            sectionsWidget,
+            Expanded(child: Container()),
+            Container(
+              width: double.infinity,
+              child: CupertinoButton(
+                color: mainColor,
+                child: Text(
+                  "I'm going!"
+                ),
+                onPressed: (){ showDialog(context: context, builder: (context) => AlertDialog(
+                  backgroundColor: currCardColor,
+                  content: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    curve: Curves.easeOut,
+                    height: 200,
+                    width: 1000,
+                    child: Column(
+                      children: [
+                        Text(
+                          "Are you sure?",
+                          style: TextStyle(
+                            fontSize: 30
+                          ),
                         ),
-                      ),
-                      Padding(padding: EdgeInsets.only(top: 10, bottom: 10)),
-                      Text(
-                        "If you click \"confirm\", this event will be finalized. Otherwise, just click out.",
-                        style: TextStyle(
-                            fontSize: 15
+                        Padding(padding: EdgeInsets.only(top: 10, bottom: 10)),
+                        Text(
+                          "If you click \"confirm\", this event will be finalized. Otherwise, just click out.",
+                          style: TextStyle(
+                              fontSize: 15
+                          ),
                         ),
-                      ),
 
-                      Expanded(child: Container()),
+                        Expanded(child: Container()),
 
-                      CupertinoButton(
-                        padding: EdgeInsets.only(left: 32, right: 32),
-                        color: mainColor,
-                        child: Text("Create"),
-                        onPressed: () async {
-                          FirebaseDatabase.instance.reference().child("groups").child(groupid).child("events").child(eventid).child("sections").once().then((value) {
-                            Map<String, dynamic> sections = Map<String, dynamic>.from(value.value);
-                            List<String> sectionNames = List<String>.from(value.value.keys);
-                            var setTime = "";
-                            var setTimeVotes = 0;
-                            List<String> times = List<String>.from(sections[sectionNames[0]].keys);
-                            times.forEach((element) {
-                              if (sections[sectionNames[0]][element]["score"] > setTimeVotes) {
-                                setTime = sectionNames[0].substring(1);
-                              }
+                        CupertinoButton(
+                          padding: EdgeInsets.only(left: 32, right: 32),
+                          color: mainColor,
+                          child: Text("Create"),
+                          onPressed: () async {
+                            FirebaseDatabase.instance.reference().child("groups").child(groupid).child("events").child(eventid).child("sections").once().then((value) {
+                              Map<String, dynamic> sections = Map<String, dynamic>.from(value.value);
+                              List<String> sectionNames = List<String>.from(value.value.keys);
+                              var setTime = "";
+                              var setTimeVotes = 0;
+                              List<String> times = List<String>.from(sections[sectionNames[0]].keys);
+                              times.forEach((element) {
+                                if (sections[sectionNames[0]][element]["score"] > setTimeVotes) {
+                                  setTime = sectionNames[0].substring(1);
+                                }
+                              });
+
+                              var setPlace = "";
+                              var setPlaceVotes = 0;
+                              List<String> places = List<String>.from(sections[sectionNames[1]].keys);
+                              places.forEach((element) {
+                                if (sections[sectionNames[1]][element]["score"] > setPlaceVotes) {
+                                  setPlace = sectionNames[1].substring(1);
+                                }
+                              });
+
+                              FirebaseDatabase.instance.reference().child("groups").child(groupid).child("events").child(eventid).child("final").set({
+                                "time": setTime,
+                                "place": setPlace
+                              });
                             });
-
-                            var setPlace = "";
-                            var setPlaceVotes = 0;
-                            List<String> places = List<String>.from(sections[sectionNames[1]].keys);
-                            places.forEach((element) {
-                              if (sections[sectionNames[1]][element]["score"] > setPlaceVotes) {
-                                setPlace = sectionNames[1].substring(1);
-                              }
-                            });
-
-                            FirebaseDatabase.instance.reference().child("groups").child(groupid).child("events").child(eventid).child("final").set({
-                              "time": setTime,
-                              "place": setPlace
-                            });
-                          });
-                          router.navigateTo(context, "/");
-                        },
-                      )
-                    ]
+                            router.navigateTo(context, "/");
+                          },
+                        )
+                      ]
+                    )
                   )
-                )
-              ));},
+                ));},
+              )
             )
-          )
-        ]
+          ]
+        ),
       )
     );
   }

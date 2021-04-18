@@ -5,8 +5,10 @@ import 'package:table/pages/auth/auth_page.dart';
 import 'package:table/pages/auth/login_page.dart';
 import 'package:table/pages/auth/register_page.dart';
 import 'package:table/pages/groups/event_info_page.dart';
+import 'package:table/pages/groups/example_map.dart';
 import 'package:table/pages/groups/group_details_page.dart';
 import 'package:table/pages/groups/groups_page.dart';
+import 'package:table/pages/groups/rohan_event_suggest_add.dart';
 import 'package:table/pages/profile/friends_page.dart';
 import 'package:table/pages/profile/profile_edit_page.dart';
 import 'package:table/pages/profile/profile_page.dart';
@@ -50,6 +52,12 @@ Future<void> main() async {
   router.define('/groups/:id/:groupid/events/:eventid', handler: new Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) {
     return new EventInfoPage(params["groupid"][0], params["eventid"][0], params["id"][0]);
   }));
+  router.define('/groups/:id/:groupid/events/:eventid/map', handler: new Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) {
+    return new MyApp();
+  }));
+  router.define('/groups/:id/:groupid/events/:eventid/new', handler: new Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) {
+    return new SuggestedEventsPage();
+  }));
 
   // PROFILE ROUTES
   router.define('/profile/:id', handler: new Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) {
@@ -73,7 +81,7 @@ Future<void> main() async {
   runApp(new MaterialApp(
     debugShowCheckedModeBanner: false,
     theme: mainTheme,
-    initialRoute: '/groups/aZ5MaA2q9zQPVSykBQXBNx987wE3/group1/events/event1',
+    initialRoute: '/auth',
     title: "Table",
     onGenerateRoute: router.generator,
     navigatorObservers: [routeObserver],

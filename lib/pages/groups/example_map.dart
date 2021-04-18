@@ -3,6 +3,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 
+import 'package:table/utils/theme.dart';
+
 void main() => runApp(MyApp());
 
 class MyApp extends StatefulWidget {
@@ -29,9 +31,9 @@ class _MyAppState extends State<MyApp> {
     print('linus is watching');
     func();
     print('linus is not watching');
-    const thomaspos = LatLng(37.164041578841314, -121.64605305117325);
-    MarkerId thomas = new MarkerId("thomas");
-    markers.add(Marker(position: thomaspos, markerId: thomas));
+    markers.add(Marker(position: LatLng(37.164041578841314, -121.64605305117325), markerId: new MarkerId("thomas")));
+    markers.add(Marker(position: LatLng(37.274160, -121.749710), markerId: new MarkerId("kashyap")));
+    markers.add(Marker(position: LatLng(37.318490, -121.766480), markerId: new MarkerId("rohan")));
   }
 
 
@@ -46,20 +48,22 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Maps Sample App'),
-          backgroundColor: Colors.green[700],
+          iconTheme: IconThemeData(
+            color: currDividerColor, //change your color here
+          ),
+          title: Text("Group Map", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: mainColor),),
+          backgroundColor: currBackgroundColor,
+          elevation: 0,
         ),
-        body: Column(children: [SizedBox(width: 400, height: 400, child:
-            GoogleMap(
-            onMapCreated: _onMapCreated,
-            initialCameraPosition: CameraPosition(
+        backgroundColor: currBackgroundColor,
+        body: GoogleMap(
+          onMapCreated: _onMapCreated,
+          initialCameraPosition: CameraPosition(
             target: _center,
             zoom: 9.0,
           ),
-              markers: markers,
+          markers: markers,
         ),
-        ),
-        ]),
       ),
     );
   }

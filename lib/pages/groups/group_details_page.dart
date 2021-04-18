@@ -178,6 +178,10 @@ class _GroupDetailsPageState extends State<GroupDetailsPage> {
                                               ],
                                             ),
                                           ),
+                                          Container(
+                                            padding: EdgeInsets.all(12),
+                                            child: IconButton(icon: Icon(Icons.map), color: currDividerColor, onPressed: () => router.navigateTo(context, "/groups/${currUser.id}/group1/events/event1/map", transition: TransitionType.native),),
+                                          )
                                         ],
                                       ),
                                     )
@@ -191,9 +195,12 @@ class _GroupDetailsPageState extends State<GroupDetailsPage> {
                           child: CupertinoButton(
                             child: Text("Add Event"),
                             color: mainColor,
-                            onPressed: () {},
+                            onPressed: () {
+                              router.navigateTo(context, "/groups/${currUser.id}/group1/events/event1/new", transition: TransitionType.nativeModal);
+                            },
                           ),
-                        )
+                        ),
+                        Padding(padding: EdgeInsets.all(8),)
                       ],
                     ),
                   ),
