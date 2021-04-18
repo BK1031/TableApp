@@ -37,37 +37,46 @@ class _ProfilePageState extends State<ProfilePage> {
     showBottomSheet(
       context: context,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      elevation: 16,
       backgroundColor: Colors.transparent,
       builder: (context) => Container(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: Icon(Icons.settings, color: currDividerColor,),
-              title: Text("Edit Profile", style: TextStyle(color: currTextColor),),
+        padding: EdgeInsets.all(8),
+        child: Card(
+          child: Container(
+            padding: EdgeInsets.all(8),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(child: Divider(thickness: 4, color: currDividerColor,), width: 75,),
+                ListTile(
+                  leading: Icon(Icons.settings, color: currDividerColor,),
+                  title: Text("Edit Profile", style: TextStyle(color: currTextColor),),
+                  onTap: () {
+                    router.pop(context);
+                  },
+                ),
+                ListTile(
+                  leading: Icon(Icons.settings, color: currDividerColor,),
+                  title: Text("Settings", style: TextStyle(color: currTextColor),),
+                  onTap: () {
+                    router.pop(context);
+                    router.navigateTo(context, "/settings", transition: TransitionType.nativeModal);
+                  },
+                ),
+                Container(
+                  width: double.infinity,
+                  child: CupertinoButton(
+                    color: errorColor,
+                    child: Text("Sign Out"),
+                    onPressed: () async {
+                      currUser = new User();
+                      fb.FirebaseAuth.instance.signOut();
+                      router.navigateTo(context, "/auth", transition: TransitionType.fadeIn, replace: true);
+                    },
+                  ),
+                )
+              ],
             ),
-            ListTile(
-              leading: Icon(Icons.settings, color: currDividerColor,),
-              title: Text("Settings", style: TextStyle(color: currTextColor),),
-            ),
-            ListTile(
-              leading: Icon(Icons.settings, color: currDividerColor,),
-              title: Text("Settings", style: TextStyle(color: currTextColor),),
-            ),
-            Container(
-              width: double.infinity,
-              child: CupertinoButton(
-                color: errorColor,
-                child: Text("Sign Out"),
-                onPressed: () async {
-                  await fb.FirebaseAuth.instance.signOut();
-                  router.navigateTo(context, "/auth", transition: TransitionType.fadeIn, clearStack: true);
-                },
-              ),
-            )
-          ],
+          ),
         ),
     ));
   }
@@ -82,11 +91,14 @@ class _ProfilePageState extends State<ProfilePage> {
         elevation: 0,
         centerTitle: false,
         actions: [
-          IconButton(
-            icon: Icon(Icons.menu, color: currDividerColor,),
-            onPressed: () {
-              showSettingsMenu();
-            },
+          Visibility(
+            visible: currUser.id == profileUser.id,
+            child: IconButton(
+              icon: Icon(Icons.menu, color: currDividerColor,),
+              onPressed: () {
+                showSettingsMenu();
+              },
+            ),
           )
         ],
       ),

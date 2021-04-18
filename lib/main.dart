@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:table/pages/auth/auth_page.dart';
 import 'package:table/pages/auth/login_page.dart';
 import 'package:table/pages/auth/register_page.dart';
+import 'package:table/pages/profile/profile_edit_page.dart';
 import 'package:table/pages/profile/profile_page.dart';
+import 'package:table/pages/settings/settings_page.dart';
 import 'package:table/pages/tab_bar_controller.dart';
 import 'package:table/utils/config.dart';
 import 'package:table/utils/theme.dart';
@@ -31,11 +33,22 @@ Future<void> main() async {
   // HOME ROUTES
   router.define('/', handler: new Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) {
     return new TabBarController();
-    // return new MaintenancePage();
   }));
+
+  // PROFILE ROUTES
   router.define('/profile/:id', handler: new Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) {
     return new ProfilePage(params["id"][0]);
-    // return new MaintenancePage();
+  }));
+  router.define('/profile/edit', handler: new Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) {
+    return new ProfileEditPage();
+  }));
+
+  // SETTINGS ROUTES
+  router.define('/settings', handler: new Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) {
+    return new SettingsPage();
+  }));
+  router.define('/settings/about', handler: new Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) {
+    return new ProfileEditPage();
   }));
 
   runApp(new MaterialApp(
