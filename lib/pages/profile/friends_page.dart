@@ -132,6 +132,7 @@ class _FriendsPageState extends State<FriendsPage> {
                     itemBuilder: (context, index) => Container(
                       padding: EdgeInsets.only(bottom: 8),
                       child: Card(
+                        color: currCardColor,
                         child: InkWell(
                           borderRadius: BorderRadius.circular(8),
                           onTap: () {
@@ -214,6 +215,7 @@ class _FriendsPageState extends State<FriendsPage> {
                               itemBuilder: (context, index) => Container(
                                   padding: EdgeInsets.only(bottom: 8),
                                   child: Card(
+                                    color: currCardColor,
                                     child: InkWell(
                                       borderRadius: BorderRadius.circular(8),
                                       onTap: () {
@@ -297,6 +299,7 @@ class _FriendsPageState extends State<FriendsPage> {
                               itemBuilder: (context, index) => Container(
                                   padding: EdgeInsets.only(bottom: 8),
                                   child: Card(
+                                    color: currCardColor,
                                     child: InkWell(
                                       borderRadius: BorderRadius.circular(8),
                                       onTap: () {

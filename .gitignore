@@ -1,6 +1,8 @@
 ios/Runner/GoogleService-Info.plist
 android/app/google-services.json
 
+ios/Runner.xcodeproj/project.pbxproj
+
 # Miscellaneous
 *.class
 *.log
