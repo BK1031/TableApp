@@ -1,4 +1,5 @@
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:table/pages/groups/groups_page.dart';
 import 'package:table/pages/profile/profile_page.dart';
@@ -20,7 +21,6 @@ class _TabBarControllerState extends State<TabBarController> with WidgetsBinding
   Widget _profilePage = new ProfilePage(currUser.id);
   Widget body;
 
-
   void onTabTapped(int index) {
     setState(() {
       currTab = index;
@@ -41,6 +41,7 @@ class _TabBarControllerState extends State<TabBarController> with WidgetsBinding
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     onTabTapped(0);
+    initializeCloudMessaging();
   }
 
   @override
@@ -56,6 +57,30 @@ class _TabBarControllerState extends State<TabBarController> with WidgetsBinding
         "status": "OFFLINE",
         "timestamp": DateTime.now().toUtc().toString()
       });
+    }
+  }
+
+  Future<void> initializeCloudMessaging() async {
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+    NotificationSettings settings = await messaging.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true,
+    );
+
+    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+      print('User granted permission');
+      String token = await FirebaseMessaging.instance.getAPNSToken();
+      FirebaseDatabase.instance.reference().child("users").child(currUser.id).child("fcmToken").set(token);
+    } else if (settings.authorizationStatus == AuthorizationStatus.provisional) {
+      print('User granted provisional permission');
+    } else {
+      print('User declined or has not accepted permission');
     }
   }
 
