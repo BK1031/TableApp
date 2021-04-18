@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "224282211478",
+    "firebase_url": "https://table-app-calhacks-default-rtdb.firebaseio.com",
+    "project_id": "table-app-calhacks",
+    "storage_bucket": "table-app-calhacks.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:224282211478:android:f5c12e9f8853687a28feb7",
+        "android_client_info": {
+          "package_name": "com.bk1031.table"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "224282211478-n2gu29etnvmga6afda8sprmmr03s03mn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAhAHS0FPS4MAe-eTWuvIzBDmX2tsluDrU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "224282211478-n2gu29etnvmga6afda8sprmmr03s03mn.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "224282211478-ajooao7bibe4mbhb8tjanpet5muor79o.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.bk1031.table"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
