@@ -87,23 +87,30 @@ class _GroupsPageState extends State<GroupsPage> with RouteAware {
           padding: EdgeInsets.only(bottom: 8),
           child: Card(
             color: currCardColor,
-            child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  InkWell(
-                    borderRadius: BorderRadius.circular(8),
-                    onTap: () {
-                      router.navigateTo(context, "/groups/${groups[index].id}", transition: TransitionType.native);
-                    },
-                    child: Container(
-                      child: ListTile(
-                        leading: Icon(Icons.people, color: currDividerColor,),
-                        title: Text(groups[index].name, style: TextStyle(color: currTextColor, fontSize: 20),),
-                        subtitle: Text(groups[index].users.map((e) => e.firstName).toList().toString().split("[")[1].split("]")[0], style: TextStyle(color: currDividerColor, fontSize: 18),),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(8),
+              onTap: () {
+                router.navigateTo(context, "/groups/${groups[index].id}", transition: TransitionType.native);
+              },
+              child: Container(
+                padding: EdgeInsets.all(8),
+                child: Row(
+                  children: [
+                    Container(padding: EdgeInsets.all(16), child: Icon(Icons.people, color: currDividerColor,)),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(groups[index].name, style: TextStyle(color: currTextColor, fontSize: 20),),
+                          Padding(padding: EdgeInsets.all(2),),
+                          Text(groups[index].users.map((e) => e.firstName).toList().toString().split("[")[1].split("]")[0], style: TextStyle(color: currDividerColor, fontSize: 16),),
+                        ],
                       ),
                     ),
-                  )
-                ]
+                  ],
+                ),
+              ),
             ),
           ),
         ),

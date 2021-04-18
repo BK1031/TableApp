@@ -1,20 +1,19 @@
-import 'package:firebase_core/firebase_core.dart';
+import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
+import 'package:table/models/notification.dart' as push;
+import 'package:table/utils/config.dart';
 import 'package:table/utils/theme.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 class HomePage extends StatefulWidget {
-  String id;
-  HomePage(this.id);
   @override
-  _HomePageState createState() => _HomePageState(id);
+  _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  String userid;
 
   List<Map<String, String>> upcomingEvents = [];
-  List<Map<String, String>> notifications = [];
+  List<push.Notification> notifications = [];
 
   List<String> shortcutsList = ["Join a group", "Add a new friend", "Send a message in ", "Suggest an event in "];
 
@@ -68,12 +67,11 @@ class _HomePageState extends State<HomePage> {
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(widgetSize/2),
                           border: Border.all(
-                              color: Colors.grey,
+                              color: currDividerColor,
                               width: 2
                           ),
                         color: currCardColor
                       ),
-
                       child: Center(
                           child: Container(
                               height: widgetSize/2,
@@ -121,7 +119,7 @@ class _HomePageState extends State<HomePage> {
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(widgetSize/2),
                       border: Border.all(
-                          color: Colors.grey,
+                          color: currDividerColor,
                           width: 2
                       ),
                       color: currCardColor,
@@ -164,7 +162,7 @@ class _HomePageState extends State<HomePage> {
         currentEvent,
         Container (
             height: 100,
-            width: MediaQuery.of(context).size.width-currentEventWidth-30,
+            width: MediaQuery.of(context).size.width-currentEventWidth - 32,
             child: ListView(
                 scrollDirection: Axis.horizontal,
                 children: upcomingEventsWidgets
@@ -187,15 +185,16 @@ class _HomePageState extends State<HomePage> {
       String time = "";
       bool am = true;
 
-      if (date.year == now.year && date.month == now.month && date.day == now.day) {
+      if (date.year == now.year && date.month == now.month &&
+          date.day == now.day) {
         if (date.hour <= 12) {
-          time = date.hour.toString()+":";
+          time = date.hour.toString() + ":";
         } else {
-          time = (date.hour-12).toString() + ":";
+          time = (date.hour - 12).toString() + ":";
         }
 
         if (date.minute < 10) {
-          time += "0"+date.minute.toString();
+          time += "0" + date.minute.toString();
         } else {
           time += date.minute.toString();
         }
@@ -211,141 +210,115 @@ class _HomePageState extends State<HomePage> {
         today = false;
         time = date.month.toString() + "/" + date.day.toString();
       }
-
-      notificationWidgets.add(new Card(
-          child: Container(
-              /*height: 100,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                      color: Colors.grey,
-                      width: 2
-                  )
-              ),*/
-              child: Center(
-                  child: Container(
-                      height: 100,
-                      padding: EdgeInsets.all(15),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Expanded(
-                                  child: Text(
-                                    notifications[i]["groupname"],
-                                    textAlign: TextAlign.left,
-                                    style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                        color: currTextColor
-                                    ),
-                                  )
-                              ),
-
-                              Expanded(
-                                child: Text(
-                                  time,
-                                  textAlign: TextAlign.right,
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                      color: currTextColor
-                                  ),
-                                ),
-                              )
-                            ]
-                          ),
-
-                          Text(
-                            notifications[i]["text"],
-                            textAlign: TextAlign.left,
-                            style: TextStyle(
-                              fontSize: 20,
-                              color: currTextColor
-                            ),
-                          )
-                        ]
-                      )
-                  )
-              )
-          )
-      )
-      );
     }
-
-    return Expanded (
-        child: ListView(
-          scrollDirection: Axis.vertical,
-          children: notificationWidgets
-        )
-    );
   }
 
-  _HomePageState (String id) {
-    userid = id;
+  @override
+  void initState() {
+    super.initState();
+    getNotifications();
+  }
 
-    FirebaseDatabase.instance.reference().child("groups").once().then((value) {
-      var groups = Map<String, dynamic>.from(value.value);
-      groups.forEach((key, groupInfo) {
-        var users = groupInfo["users"];
-        if (users.keys.contains(userid)) {
-          if (groupInfo.keys.contains("events")) {
-            List<String> eventKeys = List<String>.from(groupInfo["events"].keys);
-            eventKeys.forEach((eventKey) {
-              Map<String, String> eventInfo = Map<String, String>.from(groupInfo["events"][eventKey]);
-              if (eventInfo["status"] != "previous") {
-                setState(() {
-                  upcomingEvents.add({
-                    "id": eventKey,
-                    "time": eventInfo["time"]
-                  });
-                });
-              }
-            });
-          }
-        }
-      });
+  void getNotifications() {
+    FirebaseDatabase.instance.reference().child("notifications").onChildAdded.listen((event) {
+      push.Notification notification = new push.Notification.fromSnapshot(event.snapshot);
+      if (notification.user.id == currUser.id) {
+        setState(() {
+          notifications.add(notification);
+        });
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    //upcomingEvents = [{"id": "1", "time": "2021-04-17 16:30:00.000000"}, {"id": "2", "time": "2021-04-17 18:30:00.000000"}, {"id": "3", "time": "2021-04-18 16:30:00.000000"}];
-    notifications = [{"id": "1", "groupid": "g1", "groupname": "group 1", "text": "New message in group", "time": "2021-04-17 12:30:00.000000"}, {"id": "1", "groupid": "g1", "groupname": "group 1", "text": "New suggestion in group", "time": "2021-04-17 10:30:00.000000"}];
-
-    return Container(
-      padding: EdgeInsets.only(top: 60),
-      child: Column(
-        children: [
-          upcomingEvents.isEmpty ? Container() : Container(
-            child: Text(
+    upcomingEvents = [{"id": "1", "time": "2021-04-17 16:30:00.000000"}, {"id": "2", "time": "2021-04-17 18:30:00.000000"}, {"id": "3", "time": "2021-04-18 16:30:00.000000"}];
+    return Scaffold(
+      appBar: AppBar(
+        iconTheme: IconThemeData(
+          color: currDividerColor, //change your color here
+        ),
+        automaticallyImplyLeading: false,
+        title: Text("Table", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25, color: mainColor),),
+        backgroundColor: currBackgroundColor,
+        elevation: 0,
+        centerTitle: false,
+      ),
+      backgroundColor: currBackgroundColor,
+      body: Container(
+        padding: EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
               "Upcoming Events",
               style: TextStyle(
-                fontSize: 30,
-                color: currTextColor
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: currTextColor
               ),
             ),
-          ),
-
-          upcomingEvents.isEmpty ? Container() : Container (
-            padding: EdgeInsets.only(top: 20),
-            child: makeCurrentEventRow(upcomingEvents)
-          ),
-
-          notifications.isEmpty ? Container() : Container(
-            padding: EdgeInsets.only(top: 30),
-            child: Text(
+            upcomingEvents.isEmpty ? Container() : Container (
+              padding: EdgeInsets.only(top: 20),
+              child: makeCurrentEventRow(upcomingEvents)
+            ),
+            Padding(padding: EdgeInsets.all(16),),
+            Text(
               "Notifications",
               style: TextStyle(
-                fontSize: 30,
-                color: currTextColor
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: currTextColor
               ),
             ),
-          ),
-
-          notifications.isEmpty ? Container() : makeNotificationRow(notifications),
-        ],
+            Padding(padding: EdgeInsets.all(4),),
+            notifications.isEmpty ? Center(
+              child: Container(
+                padding: EdgeInsets.all(16),
+                child: Text("Nothing new to see here!", style: TextStyle(color: currDividerColor),),
+              ),
+            ) : Expanded(
+              child: ListView.builder(
+                itemCount: notifications.length,
+                itemBuilder: (context, index) => Container(
+                  padding: EdgeInsets.only(bottom: 8),
+                  child: Card(
+                    color: currCardColor,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(8),
+                      onTap: () {
+                        setState(() {
+                          notifications[index].read = true;
+                        });
+                        FirebaseDatabase.instance.reference().child("notifications").child(notifications[index].id).child("read").set(true);
+                        router.navigateTo(context, notifications[index].link, transition: TransitionType.native);
+                      },
+                      child: Container(
+                        padding: EdgeInsets.all(8),
+                        child: Row(
+                          children: [
+                            Container(padding: EdgeInsets.all(16), child: Icon(notifications[index].read ? Icons.notifications_none : Icons.notifications, color: notifications[index].read ? currDividerColor : mainColor)),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(notifications[index].title, style: TextStyle(color: currTextColor, fontSize: 20)),
+                                  Padding(padding: EdgeInsets.all(2),),
+                                  Text(notifications[index].desc, style: TextStyle(color: currDividerColor, fontSize: 16),),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

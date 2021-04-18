@@ -15,7 +15,7 @@ class TabBarController extends StatefulWidget {
 class _TabBarControllerState extends State<TabBarController> with WidgetsBindingObserver{
 
   int currTab = 0;
-  Widget _homeBody = new HomePage(currUser.id);
+  Widget _homeBody = new HomePage();
   Widget _groupPage = new GroupsPage();
   Widget _profilePage = new ProfilePage(currUser.id);
   Widget body;
