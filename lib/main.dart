@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:table/pages/auth/auth_page.dart';
 import 'package:table/pages/auth/login_page.dart';
 import 'package:table/pages/auth/register_page.dart';
+import 'package:table/pages/groups/add_suggested_events_page.dart';
 import 'package:table/pages/groups/event_info_page.dart';
 import 'package:table/pages/groups/group_details_page.dart';
 import 'package:table/pages/groups/groups_page.dart';
@@ -37,7 +38,8 @@ Future<void> main() async {
 
   // HOME ROUTES
   router.define('/', handler: new Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) {
-    return new TabBarController();
+    return new SuggestedEventsPage();
+    //return new TabBarController();
   }));
 
   // GROUPS ROUTES
