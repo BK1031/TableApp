@@ -58,5 +58,6 @@ Future<void> main() async {
     initialRoute: '/auth',
     title: "Table",
     onGenerateRoute: router.generator,
+    navigatorObservers: [routeObserver],
   ));
 }

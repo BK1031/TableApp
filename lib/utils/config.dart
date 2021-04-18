@@ -1,4 +1,5 @@
 import 'package:fluro/fluro.dart';
+import 'package:flutter/material.dart';
 import 'package:table/models/user.dart';
 import 'package:table/models/version.dart';
 
@@ -7,6 +8,7 @@ String appStatus = "";
 String appFull = "Version ${appVersion.toString()}";
 
 final router = new FluroRouter();
+final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
 User currUser = new User();
 

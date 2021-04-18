@@ -17,7 +17,7 @@ class ProfilePage extends StatefulWidget {
   _ProfilePageState createState() => _ProfilePageState(this.id);
 }
 
-class _ProfilePageState extends State<ProfilePage> {
+class _ProfilePageState extends State<ProfilePage> with RouteAware{
 
   User profileUser = User();
 
@@ -83,6 +83,28 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
     ));
   }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    routeObserver.subscribe(this, ModalRoute.of(context));
+  }
+
+  @override
+  void dispose() {
+    routeObserver.unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  void didPopNext() {
+    FirebaseDatabase.instance.reference().child("users").child(profileUser.id).once().then((value) {
+      setState(() {
+        profileUser = new User.fromSnapshot(value);
+      });
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
