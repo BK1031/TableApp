@@ -42,6 +42,9 @@ dependencies:
   shared_preferences: ^2.0.5
   google_maps_flutter: ^2.0.3
   location: ^4.1.1
+  cached_network_image: ^2.2.0+1
+  image_picker: ^0.7.4
+  image_cropper: ^1.4.0
 
 dev_dependencies:
   flutter_test:

@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:table/pages/auth/auth_page.dart';
 import 'package:table/pages/auth/login_page.dart';
 import 'package:table/pages/auth/register_page.dart';
+import 'package:table/pages/profile/friends_page.dart';
 import 'package:table/pages/profile/profile_edit_page.dart';
 import 'package:table/pages/profile/profile_page.dart';
+import 'package:table/pages/settings/settings_about_page.dart';
 import 'package:table/pages/settings/settings_page.dart';
 import 'package:table/pages/tab_bar_controller.dart';
 import 'package:table/utils/config.dart';
@@ -39,8 +41,11 @@ Future<void> main() async {
   router.define('/profile/:id', handler: new Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) {
     return new ProfilePage(params["id"][0]);
   }));
-  router.define('/profile/edit', handler: new Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) {
+  router.define('/profile/:id/edit', handler: new Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) {
     return new ProfileEditPage();
+  }));
+  router.define('/profile/:id/friends', handler: new Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) {
+    return new FriendsPage(params["id"][0]);
   }));
 
   // SETTINGS ROUTES
@@ -48,7 +53,7 @@ Future<void> main() async {
     return new SettingsPage();
   }));
   router.define('/settings/about', handler: new Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) {
-    return new ProfileEditPage();
+    return new SettingsAboutPage();
   }));
 
   runApp(new MaterialApp(
@@ -57,5 +62,6 @@ Future<void> main() async {
     initialRoute: '/auth',
     title: "Table",
     onGenerateRoute: router.generator,
+    navigatorObservers: [routeObserver],
   ));
 }

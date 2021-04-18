@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
 import 'package:firebase_database/firebase_database.dart';
 import 'package:fluro/fluro.dart';
@@ -16,7 +17,7 @@ class ProfilePage extends StatefulWidget {
   _ProfilePageState createState() => _ProfilePageState(this.id);
 }
 
-class _ProfilePageState extends State<ProfilePage> {
+class _ProfilePageState extends State<ProfilePage> with RouteAware{
 
   User profileUser = User();
 
@@ -41,6 +42,7 @@ class _ProfilePageState extends State<ProfilePage> {
       builder: (context) => Container(
         padding: EdgeInsets.all(8),
         child: Card(
+          color: currCardColor,
           child: Container(
             padding: EdgeInsets.all(8),
             child: Column(
@@ -52,6 +54,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   title: Text("Edit Profile", style: TextStyle(color: currTextColor),),
                   onTap: () {
                     router.pop(context);
+                    router.navigateTo(context, "/profile/${currUser.id}/edit", transition: TransitionType.nativeModal);
                   },
                 ),
                 ListTile(
@@ -82,6 +85,28 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    routeObserver.subscribe(this, ModalRoute.of(context));
+  }
+
+  @override
+  void dispose() {
+    routeObserver.unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  void didPopNext() {
+    FirebaseDatabase.instance.reference().child("users").child(profileUser.id).once().then((value) {
+      setState(() {
+        profileUser = new User.fromSnapshot(value);
+      });
+    });
+  }
+
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -102,75 +127,77 @@ class _ProfilePageState extends State<ProfilePage> {
           )
         ],
       ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.all(16),
-          child: Column(
-            children: [
-              Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Container(
-                      child: Center(
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(1000),
-                          child: Image.network(profileUser.profilePicture, height: 125, width: 125,),
-                        ),
+      backgroundColor: currBackgroundColor,
+      body: SingleChildScrollView(
+        padding: EdgeInsets.all(16),
+        child: Column(
+          children: [
+            Container(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    child: Center(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(1000),
+                        child: CachedNetworkImage(imageUrl: profileUser.profilePicture, height: 125, width: 125),
                       ),
                     ),
-                    Container(
-                      padding: EdgeInsets.all(16),
-                      child: Text("${profileUser.firstName} ${profileUser.lastName}", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25, color: currTextColor),)
-                    ),
-                    Container(
+                  ),
+                  Container(
+                    padding: EdgeInsets.all(16),
+                    child: Text("${profileUser.firstName} ${profileUser.lastName}", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25, color: currTextColor),)
+                  ),
+                  Container(
+                      child: Center(
                         child: Linkify(
                           onOpen: (link) => launch(link.url),
-                          text: profileUser.bio, style: TextStyle(fontSize: 18, color: currDividerColor),
+                          text: profileUser.bio, style: TextStyle(fontSize: 18, color: currDividerColor,),
+                          textAlign: TextAlign.center,
                           linkStyle: TextStyle(color: mainColor),
-                        )
-                    ),
-                    Container(
-                        padding: EdgeInsets.all(16),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Expanded(
+                        ),
+                      )
+                  ),
+                  Container(
+                      padding: EdgeInsets.all(16),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              children: [
+                                Text("Events", style: TextStyle(color: currDividerColor, fontSize: 18),),
+                                Padding(padding: EdgeInsets.all(4),),
+                                Text("$events", style: TextStyle(color: mainColor, fontSize: 25, fontWeight: FontWeight.bold),)
+                              ],
+                            )
+                          ),
+                          Expanded(
                               child: Column(
                                 children: [
-                                  Text("Events", style: TextStyle(color: currDividerColor, fontSize: 18),),
+                                  Text("Groups", style: TextStyle(color: currDividerColor, fontSize: 18),),
                                   Padding(padding: EdgeInsets.all(4),),
-                                  Text("$events", style: TextStyle(color: mainColor, fontSize: 25, fontWeight: FontWeight.bold),)
+                                  Text("$groups", style: TextStyle(color: mainColor, fontSize: 25, fontWeight: FontWeight.bold),)
                                 ],
                               )
-                            ),
-                            Expanded(
-                                child: Column(
-                                  children: [
-                                    Text("Groups", style: TextStyle(color: currDividerColor, fontSize: 18),),
-                                    Padding(padding: EdgeInsets.all(4),),
-                                    Text("$groups", style: TextStyle(color: mainColor, fontSize: 25, fontWeight: FontWeight.bold),)
-                                  ],
-                                )
-                            ),
-                            Expanded(
-                                child: Column(
-                                  children: [
-                                    Text("Friends", style: TextStyle(color: currDividerColor, fontSize: 18),),
-                                    Padding(padding: EdgeInsets.all(4),),
-                                    Text("$friends", style: TextStyle(color: mainColor, fontSize: 25, fontWeight: FontWeight.bold),)
-                                  ],
-                                )
-                            )
-                          ],
-                        )
-                    ),
-                  ],
-                ),
+                          ),
+                          Expanded(
+                              child: Column(
+                                children: [
+                                  Text("Friends", style: TextStyle(color: currDividerColor, fontSize: 18),),
+                                  Padding(padding: EdgeInsets.all(4),),
+                                  Text("$friends", style: TextStyle(color: mainColor, fontSize: 25, fontWeight: FontWeight.bold),)
+                                ],
+                              )
+                          )
+                        ],
+                      )
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
