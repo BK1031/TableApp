@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:table/pages/groups/event_add_suggestion.dart';
 import 'package:table/utils/theme.dart';
 import 'package:firebase_database/firebase_database.dart';
 
@@ -77,9 +78,9 @@ class _EventInfoPageState extends State<EventInfoPage> {
       if (votesYesList.contains(userid)) {
         didVote = 1;
       }
-      voteNoCount = votesNoList.length;
-      voteMidCount = votesMidList.length;
-      voteYesCount = votesYesList.length;
+      voteNoCount = votesNoList.length-1;
+      voteMidCount = votesMidList.length-1;
+      voteYesCount = votesYesList.length-1;
 
       totalScore = voteYesCount-voteNoCount;
     });
@@ -145,12 +146,12 @@ class _EventInfoPageState extends State<EventInfoPage> {
                               borderRadius: BorderRadius.circular(15.0),
                               border: Border.all(
                                   width: 1,
-                                  color: didVote != -1 ? Colors.grey : Colors.blue
+                                  color: didVote != -1 ? Colors.grey : mainColor
                               ),
                             ),
                             child: Icon(
                                 CupertinoIcons.xmark,
-                                color: didVote != -1 ? Colors.grey : Colors.blue,
+                                color: didVote != -1 ? Colors.grey : mainColor,
                                 size: 13
                             )
                         ),
@@ -216,12 +217,12 @@ class _EventInfoPageState extends State<EventInfoPage> {
                                 borderRadius: BorderRadius.circular(15.0),
                                 border: Border.all(
                                     width: 1,
-                                    color: didVote != 0 ? Colors.grey : Colors.blue
+                                    color: didVote != 0 ? Colors.grey : mainColor
                                 ),
                               ),
                               child: Icon(
                                   CupertinoIcons.minus,
-                                  color: didVote != 0 ? Colors.grey : Colors.blue,
+                                  color: didVote != 0 ? Colors.grey : mainColor,
                                   size: 13
                               )
                           ),
@@ -287,12 +288,12 @@ class _EventInfoPageState extends State<EventInfoPage> {
                               borderRadius: BorderRadius.circular(15.0),
                               border: Border.all(
                                   width: 1,
-                                  color: didVote != 1 ? Colors.grey : Colors.blue
+                                  color: didVote != 1 ? Colors.grey : mainColor
                               ),
                             ),
                             child: Icon(
                                 CupertinoIcons.checkmark,
-                                color: didVote != 1 ? Colors.grey : Colors.blue,
+                                color: didVote != 1 ? Colors.grey : mainColor,
                                 size: 13
                             )
                         ),
@@ -386,7 +387,7 @@ class _EventInfoPageState extends State<EventInfoPage> {
                               width: 1,
                               color: Colors.grey
                             ),
-                            color: Colors.white,
+                            color: currCardColor,
                           ),
                           child: Column(
                             children: [
@@ -394,7 +395,10 @@ class _EventInfoPageState extends State<EventInfoPage> {
                                 alignment: Alignment.center,
                                 padding: EdgeInsets.only(top: 5),
                                 child: Text(
-                                    voteNoCount.toString()
+                                    voteNoCount.toString(),
+                                  style: TextStyle(
+                                      color: currTextColor
+                                  ),
                                 )
                               ),
                               Container(
@@ -418,7 +422,7 @@ class _EventInfoPageState extends State<EventInfoPage> {
                                       width: 1,
                                       color: Colors.grey
                                   ),
-                                  color: Colors.white,
+                                  color: currCardColor,
                                 ),
                                 child: Column(
                                   children: [
@@ -426,7 +430,10 @@ class _EventInfoPageState extends State<EventInfoPage> {
                                         alignment: Alignment.center,
                                         padding: EdgeInsets.only(top: 5),
                                         child: Text(
-                                            voteMidCount.toString()
+                                            voteMidCount.toString(),
+                                          style: TextStyle(
+                                              color: currTextColor
+                                          ),
                                         )
                                     ),
                                   ],
@@ -447,7 +454,7 @@ class _EventInfoPageState extends State<EventInfoPage> {
                                       width: 1,
                                       color: Colors.grey
                                   ),
-                                  color: Colors.white,
+                                  color: currCardColor,
                                 ),
                                 child: Column(
                                   children: [
@@ -455,7 +462,10 @@ class _EventInfoPageState extends State<EventInfoPage> {
                                         alignment: Alignment.center,
                                         padding: EdgeInsets.only(top: 5),
                                         child: Text(
-                                            voteYesCount.toString()
+                                            voteYesCount.toString(),
+                                          style: TextStyle(
+                                            color: currTextColor
+                                          ),
                                         )
                                     ),
                                   ],
@@ -535,7 +545,8 @@ class _EventInfoPageState extends State<EventInfoPage> {
               child: Text(
                 sectionName.substring(1) + ":",
                 style: TextStyle(
-                    fontSize: 30
+                    fontSize: 30,
+                  color: currTextColor
                 ),
                 textAlign: TextAlign.left,
               ),
@@ -548,6 +559,35 @@ class _EventInfoPageState extends State<EventInfoPage> {
               suggestionCards.add(
                   makeSuggestionCard(sectionName, suggestionName, value));
             });
+
+            Card newSuggestionButton = new Card(
+              color: currCardColor,
+              child: Container(
+                width: 200,
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: mainColor,
+                    width: 2
+                  ),
+                  borderRadius: BorderRadius.circular(10)
+                ),
+                child: CupertinoButton(
+                  child: Icon(
+                    CupertinoIcons.plus,
+                    size: 50,
+                    color: mainColor,
+                  ),
+                  onPressed: () {
+                    showDialog(context: context, builder: (context) => AlertDialog(
+                      backgroundColor: currCardColor,
+                      content: EventAddSuggestion(groupid, eventid, sectionName, userid),
+                    ));
+                  },
+                )
+              )
+            );
+
+            suggestionCards.add(newSuggestionButton);
 
             sectionWidgets.add(Container(
                 height: 200,
