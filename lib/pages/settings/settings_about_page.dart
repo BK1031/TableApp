@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart' as fb;
 import 'package:firebase_database/firebase_database.dart';
 import 'package:fluro/fluro.dart';
@@ -14,67 +16,73 @@ class SettingsAboutPage extends StatefulWidget {
 
 class _SettingsAboutPageState extends State<SettingsAboutPage> {
 
-  bool mobilePush = true;
-
-  getNotificationPrefs() {
-    FirebaseDatabase.instance.reference().child("users").child(currUser.id).child("mobilePush").once().then((value) {
-      if (value.value != null) {
-        setState(() {
-          mobilePush = false;
-        });
-      }
-      else {
-        setState(() {
-          mobilePush = true;
-        });
-      }
-    });
-  }
+  String devicePlatform = "";
+  String deviceName = "";
 
   @override
   void initState() {
     super.initState();
-    getNotificationPrefs();
+    if (Platform.isIOS) {
+      devicePlatform = "iOS";
+    }
+    else if (Platform.isAndroid) {
+      devicePlatform = "Android";
+    }
+    deviceName = Platform.localHostname;
+  }
+
+  launchContributeUrl() async {
+    const url = 'https://github.com/equinox-initiative/myDECA-flutter';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  launchGuidelinesUrl() async {
+    const url = 'https://github.com/equinox-initiative/myDECA-flutter/wiki/contributing';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: new AppBar(
-          title: new Text(
-            "SETTINGS",
-            style: TextStyle(fontFamily: "Montserrat"),
-          ),
+          title: Text("About", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: mainColor),),
+          backgroundColor: currBackgroundColor,
+          elevation: 0,
         ),
         backgroundColor: currBackgroundColor,
-        body: new Container(
-          color: currBackgroundColor,
+        body: new SafeArea(
           child: SingleChildScrollView(
             padding: EdgeInsets.all(8.0),
             child: Column(
               children: <Widget>[
                 new Card(
                   color: currCardColor,
-                  child: new Column(
+                  child: Column(
                     children: <Widget>[
                       new Container(
                         padding: EdgeInsets.only(top: 16.0),
-                        child: new Text("${currUser.firstName} ${currUser.lastName}".toUpperCase(), style: TextStyle(color: mainColor, fontSize: 17, fontFamily: "Montserrat", fontWeight: FontWeight.bold),),
+                        child: new Text("device".toUpperCase(), style: TextStyle(color: mainColor, fontSize: 18, fontWeight: FontWeight.bold),),
                       ),
                       new ListTile(
-                        title: new Text("Email", style: TextStyle(fontSize: 17, color: currTextColor),),
-                        trailing: new Text(currUser.email, style: TextStyle(fontSize: 17, color: currTextColor)),
+                        title: new Text("App Version", style: TextStyle(color: currTextColor, fontSize: 17.0)),
+                        trailing: new Text("$appVersion$appStatus", style: TextStyle(color: currTextColor, fontSize: 17.0)),
                       ),
                       new ListTile(
-                        title: new Text("User ID", style: TextStyle(fontSize: 17, color: currTextColor)),
-                        trailing: new Text(currUser.id, style: TextStyle(fontSize: 14.0, fontFamily: "", color: currTextColor)),
+                        title: new Text("Device Name", style: TextStyle(color: currTextColor, fontSize: 17.0)),
+                        trailing: new Text("$deviceName", style: TextStyle(color: currTextColor, fontSize: 17.0)),
                       ),
                       new ListTile(
-                        title: new Text("Update Profile", style: TextStyle(color: mainColor), textAlign: TextAlign.center,),
-                        onTap: () {
-                          router.navigateTo(context, '/profile', transition: TransitionType.nativeModal);
-                        },
-                      )
+                        title: new Text("Platform", style: TextStyle(color: currTextColor, fontSize: 17.0)),
+                        trailing: new Text("$devicePlatform", style: TextStyle(color: currTextColor, fontSize: 17.0)),
+                      ),
                     ],
                   ),
                 ),
@@ -85,105 +93,38 @@ class _SettingsAboutPageState extends State<SettingsAboutPage> {
                     children: <Widget>[
                       new Container(
                         padding: EdgeInsets.only(top: 16.0),
-                        child: new Text("General".toUpperCase(), style: TextStyle(color: mainColor, fontSize: 17, fontFamily: "Montserrat", fontWeight: FontWeight.bold),),
+                        child: new Text("credits".toUpperCase(), style: TextStyle(color: mainColor, fontSize: 18, fontFamily: "Montserrat", fontWeight: FontWeight.bold),),
                       ),
                       new ListTile(
-                        title: new Text("About", style: TextStyle(fontSize: 17, color: currTextColor)),
-                        trailing: new Icon(Icons.arrow_forward_ios, color: mainColor),
+                        title: new Text("Bharat Kathi", style: TextStyle(color: currTextColor, fontSize: 17,)),
+                        subtitle: new Text("App Development", style: TextStyle(color: Colors.grey)),
                         onTap: () {
-                          router.navigateTo(context, '/settings/about', transition: TransitionType.native);
+                          const url = 'https://www.instagram.com/bk1031_official';
+                          launch(url);
                         },
                       ),
                       new ListTile(
-                        title: new Text("Help", style: TextStyle(fontSize: 17, color: currTextColor)),
-                        trailing: new Icon(Icons.arrow_forward_ios, color: mainColor),
-                        onTap: () async {
-                          const url = 'https://docs.mydeca.org';
-                          if (await canLaunch(url)) {
-                            await launch(url);
-                          } else {
-                            throw 'Could not launch $url';
-                          }
-                        },
-                      ),
-                      new ListTile(
-                          title: new Text("Legal", style: TextStyle(fontSize: 17, color: currTextColor)),
-                          trailing: new Icon(Icons.arrow_forward_ios, color: mainColor),
-                          onTap: () {
-                            showLicensePage(
-                                context: context,
-                                applicationVersion: appFull + appStatus,
-                                applicationName: "myDECA App",
-                                applicationLegalese: appLegal,
-                                applicationIcon: new Image.asset(
-                                  'images/deca-diamond.png',
-                                  height: 35.0,
-                                )
-                            );
-                          }
-                      ),
-                      new ListTile(
-                        title: new Text("Sign Out", style: TextStyle(fontSize: 17, color: Colors.red),),
+                        title: new Text("Thomas Liang", style: TextStyle(color: currTextColor, fontSize: 17,)),
+                        subtitle: new Text("App Development", style: TextStyle(color: Colors.grey)),
                         onTap: () {
-                          currUser = new User();
-                          fb.FirebaseAuth.instance.signOut();
-                          router.navigateTo(context, "/auth", transition: TransitionType.fadeIn, replace: true);
+                          const url = 'https://www.instagram.com/thomas_____liang/';
+                          launch(url);
                         },
                       ),
                       new ListTile(
-                        title: new Text("Delete Account", style: TextStyle(color: Colors.red, fontSize: 17),),
-                        subtitle: new Text("\nDeleting your Table Account will remove all the data linked to your account as well. You will be required to create a new account in order to sign in again.\n", style: TextStyle(color: Colors.grey)),
+                        title: new Text("Rohan Viswanathan", style: TextStyle(color: currTextColor, fontSize: 17,)),
+                        subtitle: new Text("Server Development", style: TextStyle(color: Colors.grey)),
                         onTap: () {
-
+                          const url = 'https://www.instagram.com/rpi2._/';
+                          launch(url);
                         },
-                      )
-                    ],
-                  ),
-                ),
-                new Padding(padding: EdgeInsets.all(4)),
-                new Card(
-                  color: currCardColor,
-                  child: Column(
-                    children: <Widget>[
-                      new Container(
-                        padding: EdgeInsets.only(top: 16.0),
-                        child: new Text("Preferences".toUpperCase(), style: TextStyle(color: mainColor, fontSize: 17, fontFamily: "Montserrat", fontWeight: FontWeight.bold),),
                       ),
-                      new SwitchListTile.adaptive(
-                        activeColor: mainColor,
-                        activeTrackColor: mainColor,
-                        value: mobilePush,
-                        onChanged: (val) {
-                          FirebaseDatabase.instance.reference().child("users").child(currUser.id).child("mobilePush").set(val);
-                          setState(() {
-                            mobilePush = val;
-                          });
-                        },
-                        title: new Text("Push Notifications", style: TextStyle(fontSize: 17, color: currTextColor)),
-                      ),
-                      new SwitchListTile.adaptive(
-                        activeColor: mainColor,
-                        activeTrackColor: mainColor,
-                        title: new Text("Dark Mode", style: TextStyle(fontSize: 17, color: currTextColor)),
-                        value: darkMode,
-                        onChanged: (bool value) {
-                          // Toggle Dark Mode
-                          setState(() {
-                            darkMode = value;
-                            if (darkMode) {
-                              currTextColor = darkTextColor;
-                              currBackgroundColor = darkBackgroundColor;
-                              currCardColor = darkCardColor;
-                              currDividerColor = darkDividerColor;
-                            }
-                            else {
-                              currTextColor = lightTextColor;
-                              currBackgroundColor = lightBackgroundColor;
-                              currCardColor = lightCardColor;
-                              currDividerColor = lightDividerColor;
-                            }
-                            FirebaseDatabase.instance.reference().child("users").child(currUser.id).update({"darkMode": darkMode});
-                          });
+                      new ListTile(
+                        title: new Text("Kashyap Chaturvedula", style: TextStyle(color: currTextColor, fontSize: 17)),
+                        subtitle: new Text("Database Design", style: TextStyle(color: Colors.grey)),
+                        onTap: () {
+                          const url = 'https://www.instagram.com/kashyap456/';
+                          launch(url);
                         },
                       ),
                     ],
@@ -196,59 +137,34 @@ class _SettingsAboutPageState extends State<SettingsAboutPage> {
                     children: <Widget>[
                       new Container(
                         padding: EdgeInsets.only(top: 16.0),
-                        child: new Text("Feedback".toUpperCase(), style: TextStyle(color: mainColor, fontSize: 17, fontFamily: "Montserrat", fontWeight: FontWeight.bold),),
+                        child: new Text("contributing".toUpperCase(), style: TextStyle(color: mainColor, fontSize: 17,fontWeight: FontWeight.bold),),
                       ),
                       new ListTile(
-                        title: new Text("Provide Feedback", style: TextStyle(fontSize: 17, color: currTextColor)),
+                        title: new Text("View on GitHub", style: TextStyle(color: currTextColor, fontSize: 17,)),
                         trailing: new Icon(Icons.arrow_forward_ios, color: mainColor),
-                        onTap: () async {
-                          const url = 'https://forms.gle/8UMH4V5Ty79qFEnNA';
-                          if (await canLaunch(url)) {
-                            await launch(url);
-                          } else {
-                            throw 'Could not launch $url';
-                          }
+                        onTap: () {
+                          launchContributeUrl();
                         },
                       ),
                       new ListTile(
-                        title: new Text("Report a Bug", style: TextStyle(fontSize: 17, color: currTextColor)),
+                        title: new Text("Contributing Guidelines", style: TextStyle(color: currTextColor, fontSize: 17,)),
                         trailing: new Icon(Icons.arrow_forward_ios, color: mainColor),
-                        onTap: () async {
-                          const url = 'https://github.com/Equinox-Initiative/myDECA-flutter/issues';
-                          if (await canLaunch(url)) {
-                            await launch(url);
-                          } else {
-                            throw 'Could not launch $url';
-                          }
+                        onTap: () {
+                          launchGuidelinesUrl();
                         },
                       ),
                     ],
                   ),
                 ),
-                new Padding(padding: EdgeInsets.all(4)),
-                new Column(
-                  children: <Widget>[
-                    new Card(
-                      color: currCardColor,
-                      child: Column(
-                        children: <Widget>[
-                          new Container(
-                            padding: EdgeInsets.only(top: 16.0),
-                            child: new Text("developer".toUpperCase(), style: TextStyle(color: mainColor, fontSize: 17, fontFamily: "Montserrat", fontWeight: FontWeight.bold),),
-                          ),
-                          new ListTile(
-                            leading: new Icon(Icons.developer_mode, color: darkMode ? Colors.grey : Colors.black54,),
-                            title: new Text("Test Firebase Upload", style: TextStyle(fontSize: 17, color: currTextColor)),
-                            onTap: () {
-                              FirebaseDatabase.instance.reference().child("testing").push().set("${currUser.firstName} - ${currUser.email}");
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+                new Padding(padding: EdgeInsets.all(16.0)),
+                new InkWell(
+                  child: new Text("© Bharat Kathi 2021", style: TextStyle(color: currDividerColor),),
+                  splashColor: currBackgroundColor,
+                  highlightColor: currCardColor,
+                  onTap: () {
+                    launch("https://github.com/equinox-initiative/myDECA-flutter");
+                  },
                 ),
-                new Padding(padding: EdgeInsets.all(16.0))
               ],
             ),
           ),

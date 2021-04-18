@@ -6,6 +6,7 @@ import 'package:table/pages/auth/login_page.dart';
 import 'package:table/pages/auth/register_page.dart';
 import 'package:table/pages/profile/profile_edit_page.dart';
 import 'package:table/pages/profile/profile_page.dart';
+import 'package:table/pages/settings/settings_about_page.dart';
 import 'package:table/pages/settings/settings_page.dart';
 import 'package:table/pages/tab_bar_controller.dart';
 import 'package:table/utils/config.dart';
@@ -48,7 +49,7 @@ Future<void> main() async {
     return new SettingsPage();
   }));
   router.define('/settings/about', handler: new Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) {
-    return new ProfileEditPage();
+    return new SettingsAboutPage();
   }));
 
   runApp(new MaterialApp(
