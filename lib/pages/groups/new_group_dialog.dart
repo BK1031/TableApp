@@ -95,7 +95,6 @@ class _NewGroupDialogState extends State<NewGroupDialog> {
                           hintText: "######"
                         ),
                         keyboardType: TextInputType.phone,
-                        textInputAction: TextInputAction.join,
                         onChanged: (input) {
                           group.id = input;
                         },
