@@ -202,7 +202,7 @@ class _SuggestedEventsPageState extends State<SuggestedEventsPage> with RouteAwa
                     ),
                     SizedBox(height: 10),
                     TextField(
-                      cursorColor: Colors.blue,
+                      cursorColor: mainColor,
                       controller: textControllerDate,
                       textCapitalization: TextCapitalization.characters,
                       onTap: () => _selectDate(context),
@@ -224,10 +224,6 @@ class _SuggestedEventsPageState extends State<SuggestedEventsPage> with RouteAwa
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(10.0)),
                           borderSide: BorderSide(color: mainColor, width: 2),
-                        ),
-                        errorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                          borderSide: BorderSide(color: Colors.redAccent, width: 2),
                         ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(10.0)),
@@ -300,10 +296,6 @@ class _SuggestedEventsPageState extends State<SuggestedEventsPage> with RouteAwa
                           borderRadius: BorderRadius.all(Radius.circular(10.0)),
                           borderSide: BorderSide(color: mainColor, width: 2),
                         ),
-                        errorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                          borderSide: BorderSide(color: Colors.redAccent, width: 2),
-                        ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(10.0)),
                         ),
@@ -375,10 +367,6 @@ class _SuggestedEventsPageState extends State<SuggestedEventsPage> with RouteAwa
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(10.0)),
                           borderSide: BorderSide(color: mainColor, width: 2),
-                        ),
-                        errorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                          borderSide: BorderSide(color: Colors.redAccent, width: 2),
                         ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(10.0)),
@@ -464,10 +452,6 @@ class _SuggestedEventsPageState extends State<SuggestedEventsPage> with RouteAwa
                           borderRadius: BorderRadius.all(Radius.circular(10.0)),
                           borderSide: BorderSide(color: mainColor, width: 2),
                         ),
-                        errorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                          borderSide: BorderSide(color: Colors.redAccent, width: 2),
-                        ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(10.0)),
                         ),
@@ -548,10 +532,6 @@ class _SuggestedEventsPageState extends State<SuggestedEventsPage> with RouteAwa
                           borderRadius: BorderRadius.all(Radius.circular(10.0)),
                           borderSide: BorderSide(color: mainColor, width: 2),
                         ),
-                        errorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                          borderSide: BorderSide(color: Colors.redAccent, width: 2),
-                        ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(10.0)),
                         ),
@@ -622,10 +602,6 @@ class _SuggestedEventsPageState extends State<SuggestedEventsPage> with RouteAwa
                           borderRadius: BorderRadius.all(Radius.circular(10.0)),
                           borderSide: BorderSide(color: mainColor, width: 2),
                         ),
-                        errorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                          borderSide: BorderSide(color: Colors.redAccent, width: 2),
-                        ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(10.0)),
                         ),
@@ -655,56 +631,5 @@ class _SuggestedEventsPageState extends State<SuggestedEventsPage> with RouteAwa
       ),
     );
   }
-
-
-//  @override
-//  Widget build(BuildContext context) {
-//    return Scaffold(
-//      appBar: AppBar(
-//          automaticallyImplyLeading: false,
-//          title: Text("Suggest An Event", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25, color: mainColor),),
-//          backgroundColor: currBackgroundColor,
-//          elevation: 0,
-//          centerTitle: false
-//      ),
-//      floatingActionButton: FloatingActionButton(
-//        child: Icon(Icons.add, color: Colors.white,),
-//        onPressed: () {
-//          showDialog(context: context, builder: (context) => AlertDialog(
-//            backgroundColor: currCardColor,
-//            content: NewGroupDialog(),
-//          ));
-//        },
-//      ),
-//      backgroundColor: currBackgroundColor,
-//      body: ListView.builder(
-//        padding: EdgeInsets.all(16),
-//        itemCount: 2,
-//        itemBuilder: (context, index) => Container(
-//          padding: EdgeInsets.only(bottom: 8),
-//          child: Card(
-//            color: currCardColor,
-//            child: Column(
-//                mainAxisSize: MainAxisSize.min,
-//                children: <Widget>[
-//                  InkWell(
-//                    borderRadius: BorderRadius.circular(8),
-//                    onTap: () {
-//                    },
-//                    child: Container(
-//                      child: ListTile(
-//                        leading: Icon(Icons.emoji_transportation, color: currDividerColor,),
-//                        title: Text("Add Suggested Event"),
-//                        subtitle: Text("eg. Cupertino Main Street", style: TextStyle(color: currDividerColor, fontSize: 18),),
-//                      ),
-//                    ),
-//                  )
-//                ]
-//            ),
-//          ),
-//        ),
-//      ),
-//    );
-//  }
 
 }
