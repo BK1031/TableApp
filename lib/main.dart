@@ -5,6 +5,7 @@ import 'package:table/pages/auth/auth_page.dart';
 import 'package:table/pages/auth/login_page.dart';
 import 'package:table/pages/auth/register_page.dart';
 import 'package:table/pages/groups/event_info_page.dart';
+import 'package:table/pages/groups/group_details_page.dart';
 import 'package:table/pages/groups/groups_page.dart';
 import 'package:table/pages/profile/friends_page.dart';
 import 'package:table/pages/profile/profile_edit_page.dart';
@@ -42,6 +43,9 @@ Future<void> main() async {
   // GROUPS ROUTES
   router.define('/groups', handler: new Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) {
     return new GroupsPage();
+  }));
+  router.define('/groups/:id', handler: new Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) {
+    return new GroupDetailsPage(params["id"][0]);
   }));
   router.define('/groups/:groupid/events/:eventid', handler: new Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) {
     return new EventInfoPage(params["groupid"][0], params["eventid"][0]);

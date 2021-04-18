@@ -70,7 +70,7 @@ class _TabBarControllerState extends State<TabBarController> with WidgetsBinding
         fixedColor: mainColor,
         showSelectedLabels: true,
         showUnselectedLabels: false,
-        unselectedItemColor: darkMode ? Colors.grey : Colors.black54,
+        unselectedItemColor: currDividerColor,
         onTap: onTabTapped,
         items: <BottomNavigationBarItem>[
           new BottomNavigationBarItem(

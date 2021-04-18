@@ -22,14 +22,15 @@ const darkCardColor = const Color(0xFF151a21);
 const darkDividerColor = const Color(0xFFafbaca);
 
 // CURRENT COLORs
-var currTextColor = lightTextColor;
-var currBackgroundColor = lightBackgroundColor;
-var currCardColor = lightCardColor;
-var currDividerColor = lightDividerColor;
+var currTextColor = darkTextColor;
+var currBackgroundColor = darkBackgroundColor;
+var currCardColor = darkCardColor;
+var currDividerColor = darkDividerColor;
 
 ThemeData mainTheme = new ThemeData(
     accentColor: mainColor,
     primaryColor: mainColor,
+    brightness: Brightness.dark,
     cardTheme: CardTheme(
       color: currCardColor,
       elevation: 0,

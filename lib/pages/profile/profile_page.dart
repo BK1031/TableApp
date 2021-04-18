@@ -17,7 +17,7 @@ class ProfilePage extends StatefulWidget {
   _ProfilePageState createState() => _ProfilePageState(this.id);
 }
 
-class _ProfilePageState extends State<ProfilePage> with RouteAware{
+class _ProfilePageState extends State<ProfilePage> with RouteAware {
 
   User profileUser = User();
 
@@ -99,7 +99,7 @@ class _ProfilePageState extends State<ProfilePage> with RouteAware{
               children: [
                 Container(child: Divider(thickness: 4, color: currDividerColor,), width: 75,),
                 ListTile(
-                  leading: Icon(Icons.settings, color: currDividerColor,),
+                  leading: Icon(Icons.edit, color: currDividerColor,),
                   title: Text("Edit Profile", style: TextStyle(color: currTextColor),),
                   onTap: () {
                     router.pop(context);
@@ -158,7 +158,6 @@ class _ProfilePageState extends State<ProfilePage> with RouteAware{
       }
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
