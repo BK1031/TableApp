@@ -3,6 +3,7 @@ import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:table/models/group.dart';
 import 'package:table/models/user.dart';
+import 'package:table/pages/groups/chat_page.dart';
 import 'package:table/pages/groups/new_group_dialog.dart';
 import 'package:table/utils/config.dart';
 import 'package:table/utils/theme.dart';
@@ -59,7 +60,14 @@ class _GroupDetailsPageState extends State<GroupDetailsPage> {
           children: [
             Text("Group ID: ${group.id}", style: TextStyle(color: currTextColor, fontSize: 18),),
             Padding(padding: EdgeInsets.all(4),),
-            Text(group.desc, style: TextStyle(color: currDividerColor, fontSize: 18))
+            Text(group.desc, style: TextStyle(color: currDividerColor, fontSize: 18)),
+            Padding(padding: EdgeInsets.all(4),),
+            Container(height: 200,),
+            Text("Chat", style: TextStyle(color: currTextColor, fontSize: 18, fontWeight: FontWeight.bold),),
+            Padding(padding: EdgeInsets.all(4),),
+            new Expanded(
+              child: ChatPage(group.id),
+            )
           ],
         ),
       ),
