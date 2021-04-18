@@ -37,11 +37,20 @@ class _GroupsPageState extends State<GroupsPage> {
                       child:Column(
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
-                          const ListTile(
-                              leading: Icon(Icons.people),
-                              title: Text('Group 1'),
-                              subtitle: Text('Bharat, Thomas, Kashyap, Rohan')
-                          ),
+                          InkWell(
+                            onTap: () {
+                              print("tapped");
+                            },
+                            child: Container(
+                              height: 80,
+                              width: 400,
+                              child: const ListTile(
+                                  leading: Icon(Icons.people),
+                                  title: Text('Group 1'),
+                                  subtitle: Text('Bharat, Thomas, Kashyap, Rohan')
+                              ),
+                            ),
+                          )
                         ]
                       ),
                     ),
