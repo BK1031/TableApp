@@ -256,6 +256,14 @@ class _FriendsPageState extends State<FriendsPage> {
                                                                 FirebaseDatabase.instance.reference().child("users").child(profileUser.id).child("friends").child(incomingRequests[index].id).set(incomingRequests[index].id);
                                                                 FirebaseDatabase.instance.reference().child("users").child(incomingRequests[index].id).child("friends").child(profileUser.id).set(profileUser.id);
                                                                 FirebaseDatabase.instance.reference().child("friend-requests").child("${incomingRequests[index].id}–${profileUser.id}").remove();
+                                                                FirebaseDatabase.instance.reference().child("notifications").push().set({
+                                                                  "title": "New Friend!",
+                                                                  "desc": "${currUser.firstName} ${currUser.lastName} is now your friend. Click to view their profile.",
+                                                                  "link": "/profile/${incomingRequests[index].id}/friends",
+                                                                  "user": incomingRequests[index].id,
+                                                                  "timestamp": DateTime.now().toString(),
+                                                                  "read": false
+                                                                });
                                                                 setState(() {
                                                                   incomingRequests.removeAt(index);
                                                                 });

@@ -287,6 +287,14 @@ class _ProfilePageState extends State<ProfilePage> with RouteAware {
                     print(friendStatus);
                     if (friendStatus == "NOT_FRIEND") {
                       FirebaseDatabase.instance.reference().child("friend-requests").child("${currUser.id}–${profileUser.id}").set("${currUser.id}–${profileUser.id}");
+                      FirebaseDatabase.instance.reference().child("notifications").push().set({
+                        "title": "New Friend Request!",
+                        "desc": "${currUser.firstName} ${currUser.lastName} wants to be friends with you. Click to view the request.",
+                        "link": "/profile/${profileUser.id}/friends",
+                        "user": profileUser.id,
+                        "timestamp": DateTime.now().toString(),
+                        "read": false
+                      });
                       checkFriendStatus();
                     }
                   },
