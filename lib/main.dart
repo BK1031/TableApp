@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:table/pages/auth/auth_page.dart';
 import 'package:table/pages/auth/login_page.dart';
 import 'package:table/pages/auth/register_page.dart';
+import 'package:table/pages/profile/friends_page.dart';
 import 'package:table/pages/profile/profile_edit_page.dart';
 import 'package:table/pages/profile/profile_page.dart';
 import 'package:table/pages/settings/settings_about_page.dart';
@@ -42,6 +43,9 @@ Future<void> main() async {
   }));
   router.define('/profile/:id/edit', handler: new Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) {
     return new ProfileEditPage();
+  }));
+  router.define('/profile/:id/friends', handler: new Handler(handlerFunc: (BuildContext context, Map<String, dynamic> params) {
+    return new FriendsPage(params["id"][0]);
   }));
 
   // SETTINGS ROUTES
